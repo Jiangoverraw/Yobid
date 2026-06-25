@@ -181,6 +181,22 @@ export default function SettingsPage() {
     }
   };
 
+  const handleClearAll = async () => {
+    if (trashItems.length === 0) return;
+    if (!window.confirm(`Are you sure you want to permanently delete ALL ${trashItems.length} item(s) in trash? This action cannot be undone.`)) {
+      return;
+    }
+    try {
+      setTrashSuccessMsg('');
+      setTrashError(null);
+      const result = await trashApi.clearAll();
+      setTrashSuccessMsg(`Cleared trash — ${result.deleted} item(s) permanently deleted.`);
+      fetchTrash();
+    } catch (err) {
+      setTrashError(err.message);
+    }
+  };
+
   useEffect(() => {
     if (activeSection === 'trash') {
       fetchTrash();
@@ -679,16 +695,44 @@ export default function SettingsPage() {
                 <h1 className="set-content-title" style={{ marginBottom: '0.5rem' }}>Trash</h1>
                 <p className="set-section-desc">View, restore, or permanently delete items you have soft-deleted.</p>
               </div>
-              <button 
-                onClick={fetchTrash} 
-                disabled={loadingTrash}
-                className="dash-icon-btn" 
-                style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #e5e7eb', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-                type="button"
-              >
-                {loadingTrash ? <Loader2 size={16} className="dash-spinner" /> : <RotateCcw size={16} />}
-                <span style={{ fontSize: '0.85rem', fontWeight: 500, color: '#374151' }}>Refresh</span>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {/* Clear All button – only shown when trash has items */}
+                {trashItems.length > 0 && (
+                  <button
+                    onClick={handleClearAll}
+                    disabled={loadingTrash}
+                    type="button"
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid #fee2e2',
+                      background: '#fef2f2',
+                      cursor: loadingTrash ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transition: 'all 0.15s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#fee2e2'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#fef2f2'; }}
+                  >
+                    <Trash2 size={15} style={{ color: '#dc2626' }} />
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#dc2626' }}>Clear All</span>
+                  </button>
+                )}
+
+                {/* Refresh button */}
+                <button 
+                  onClick={fetchTrash} 
+                  disabled={loadingTrash}
+                  className="dash-icon-btn" 
+                  style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #e5e7eb', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  type="button"
+                >
+                  {loadingTrash ? <Loader2 size={16} className="dash-spinner" /> : <RotateCcw size={16} />}
+                  <span style={{ fontSize: '0.85rem', fontWeight: 500, color: '#374151' }}>Refresh</span>
+                </button>
+              </div>
             </div>
 
             {trashError && (

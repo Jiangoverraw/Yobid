@@ -9,6 +9,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: '', type: 'error' });
   const [focusedField, setFocusedField] = useState(null);
@@ -31,7 +32,7 @@ export default function Login() {
 
     setLoading(true);
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       setAlert({ message: 'Login successful! Redirecting...', type: 'success' });
       setTimeout(() => navigate(from, { replace: true }), 800);
     } catch (err) {
@@ -186,7 +187,7 @@ export default function Login() {
             <div className={`cu-field ${focusedField === 'password' ? 'cu-field--focused' : ''} ${password ? 'cu-field--filled' : ''}`}>
               <div className="cu-label-row">
                 <label className="cu-label" htmlFor="login-password">Password</label>
-                <a href="#" className="cu-forgot-link" id="link-forgot-password">Forgot password?</a>
+                <Link to="/forgot-password" className="cu-forgot-link" id="link-forgot-password">Forgot password?</Link>
               </div>
               <div className="cu-input-wrap">
                 <Lock size={16} className="cu-input-icon" />
@@ -213,6 +214,20 @@ export default function Login() {
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+            </div>
+
+            {/* Remember me + Submit */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#94a3b8' }}>
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  style={{ width: '16px', height: '16px', accentColor: '#6366f1', cursor: 'pointer' }}
+                />
+                Remember me for 30 days
+              </label>
             </div>
 
             <button

@@ -3,6 +3,7 @@ import { useAuth } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import OAuthCallback from './pages/OAuthCallback';
 import Settings from './pages/Settings';
@@ -39,6 +40,7 @@ function App() {
           {/* ── Public pages (redirect to /dashboard if already logged in) ── */}
           <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+          <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
 
           {/* ── OAuth callback ── */}
           <Route path="/oauth/callback" element={<OAuthCallback />} />

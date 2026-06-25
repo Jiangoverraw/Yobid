@@ -23,10 +23,9 @@ export class WorkspacesController {
 
   /**
    * POST /workspaces
-   * Create a new workspace – ADMIN or PROJECT_MANAGER
+   * Create a new workspace – any authenticated user
    */
   @Post()
-  @Roles(Role.ADMIN, Role.PROJECT_MANAGER)
   create(
     @Body() body: { name: string; description?: string },
     @CurrentUser() user: any,

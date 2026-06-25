@@ -51,4 +51,14 @@ export class TrashController {
   ) {
     return this.trashService.permanentDelete(type, id, user.userId, user.role);
   }
+
+  /**
+   * DELETE /trash/clear-all
+   * Permanently delete ALL trash items belonging to the current user
+   * (ADMIN clears everything)
+   */
+  @Delete('clear-all')
+  clearAll(@CurrentUser() user: any) {
+    return this.trashService.clearAll(user.userId, user.role);
+  }
 }

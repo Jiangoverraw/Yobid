@@ -71,4 +71,48 @@ export class MailService {
 
     return true;
   }
+
+  async sendPasswordResetCode(email: string, code: string): Promise<boolean> {
+    const fromEmail = this.configService.get<string>('SMTP_FROM') || 'noreply@yorbid.com';
+    const subject = 'Reset Your Yorbid Password';
+    const text = `Your password reset code is ${code}. It will expire in 5 minutes.`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <h2 style="color: #7c3aed; text-align: center;">Yorbid Password Reset</h2>
+        <p>Hello,</p>
+        <p>You requested to reset your password. Please use the following 6-digit code to verify your identity and set a new password:</p>
+        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; font-size: 24px; font-weight: bold; text-align: center; letter-spacing: 5px; color: #1f2937; margin: 20px 0;">
+          ${code}
+        </div>
+        <p style="color: #6b7280; font-size: 14px;">This code is valid for 5 minutes. If you did not request a password reset, please ignore this email.</p>
+        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
+        <p style="text-align: center; color: #9ca3af; font-size: 12px;">© ${new Date().getFullYear()} Yorbid. All rights reserved.</p>
+      </div>
+    `;
+
+    if (this.transporter) {
+      try {
+        await this.transporter.sendMail({
+          from: `"Yorbid Security" <${fromEmail}>`,
+          to: email,
+          subject,
+          text,
+          html,
+        });
+        this.logger.log(`Password reset code successfully sent to ${email} via SMTP.`);
+        return true;
+      } catch (error) {
+        this.logger.error(`Failed to send password reset email to ${email} via SMTP:`, error.stack);
+      }
+    }
+
+    console.log('\n' + '='.repeat(60));
+    console.log('📬 [MAIL SERVICE DEV MOCK] PASSWORD RESET EMAIL SENT');
+    console.log(`To:      ${email}`);
+    console.log(`Subject: ${subject}`);
+    console.log(`Code:    ${code} (Expires in 5 minutes)`);
+    console.log('='.repeat(60) + '\n');
+
+    return true;
+  }
 }

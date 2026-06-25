@@ -53,11 +53,23 @@ export class ProjectsService {
       throw new NotFoundException(`Workspace ${data.workspaceId} not found`);
     }
 
-    // Only ADMIN or workspace owner/manager can create projects
+    // Check user has access to workspace
     await this.assertWorkspaceAccess(data.workspaceId, userId, userRole);
 
+    // Allow: global ADMIN, global PROJECT_MANAGER,
+    //        OR workspace owner/manager (WorkspaceRole.OWNER / MANAGER)
     if (userRole !== Role.ADMIN && userRole !== Role.PROJECT_MANAGER) {
-      throw new ForbiddenException('Only PROJECT_MANAGER or ADMIN can create projects');
+      const membership = await this.prisma.workspaceMember.findUnique({
+        where: { workspaceId_userId: { workspaceId: data.workspaceId, userId } },
+      });
+      if (
+        !membership ||
+        (membership.role !== 'OWNER' && membership.role !== 'MANAGER')
+      ) {
+        throw new ForbiddenException(
+          'Only the workspace owner, manager, or a global admin can create projects',
+        );
+      }
     }
 
     const project = await this.prisma.project.create({

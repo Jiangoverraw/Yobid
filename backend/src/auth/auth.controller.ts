@@ -30,12 +30,46 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return this.authService.login(user);
+    return this.authService.login(user, body.rememberMe === true);
   }
 
+  /**
+   * POST /auth/register
+   * Creates user (unverified) and sends OTP to email.
+   * Returns { message, email } – NOT a JWT token.
+   */
   @Post('register')
   async register(@Body() body: any) {
     return this.authService.register(body.email, body.password, body.name);
+  }
+
+  /**
+   * POST /auth/register/verify
+   * Verifies the OTP sent after registration.
+   * Returns JWT on success.
+   */
+  @Post('register/verify')
+  async verifyRegistration(@Body() body: { email: string; code: string }) {
+    try {
+      const user = await this.authService.verifyRegistrationCode(body.email, body.code);
+      return this.authService.login(user, false);
+    } catch (error) {
+      throw new UnauthorizedException(error.message || 'Verification failed');
+    }
+  }
+
+  /**
+   * POST /auth/register/resend
+   * Resend registration OTP.
+   */
+  @Post('register/resend')
+  async resendRegistration(@Body() body: { email: string }) {
+    try {
+      await this.authService.resendRegistrationCode(body.email);
+      return { message: 'Verification code resent successfully' };
+    } catch (error) {
+      throw new UnauthorizedException(error.message || 'Resend failed');
+    }
   }
 
   @UseGuards(JwtAuthGuard)
@@ -107,5 +141,25 @@ export class AuthController {
     const frontendUrl =
       this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
     res.redirect(`${frontendUrl}/oauth/callback?token=${access_token}`);
+  }
+
+  // ─── Password reset ───────────────────────────────────────────────────────
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: { email: string }) {
+    await this.authService.forgotPassword(body.email);
+    return { message: 'Password reset code has been sent to your email' };
+  }
+
+  @Post('verify-reset-code')
+  async verifyResetCode(@Body() body: { email: string; code: string }) {
+    await this.authService.verifyResetCode(body.email, body.code);
+    return { message: 'Verification code is valid' };
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() body: { email: string; code: string; newPassword: string }) {
+    await this.authService.resetPassword(body.email, body.code, body.newPassword);
+    return { message: 'Password has been reset successfully' };
   }
 }

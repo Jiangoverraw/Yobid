@@ -10,9 +10,8 @@ import { useAuth } from '../context/AuthContext';
 import { workspacesApi } from '../services/api';
 import Sidebar from '../components/Sidebar';
 
-const CAN_CREATE = ['ADMIN', 'PROJECT_MANAGER'];
-
 const renderAvatar = (targetUser, className = 'dash-avatar') => {
+
   const displayName = targetUser?.name || targetUser?.email?.split('@')[0] || 'User';
   const letter = displayName.charAt(0).toUpperCase();
   const avatarValue = targetUser?.avatar;
@@ -58,8 +57,9 @@ export default function WorkspacesPage() {
   );
   const toggleSidebar = () => setSidebarOpen(p => { const v = !p; localStorage.setItem('sidebarOpen', v); return v; });
 
-  const canCreate = CAN_CREATE.includes(user?.role);
+  const canCreate = true; // All authenticated users can create workspaces
   const isAdmin   = user?.role === 'ADMIN';
+
 
   const load = async () => {
     setLoading(true);

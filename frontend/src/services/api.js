@@ -40,17 +40,31 @@ async function request(path, options = {}) {
 
 export const authApi = {
   /** POST /auth/login → { access_token, user } */
-  login: (email, password) =>
+  login: (email, password, rememberMe = false) =>
     request('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, rememberMe }),
     }),
 
-  /** POST /auth/register → user */
+  /** POST /auth/register → { message, email } (no token – must verify email) */
   register: (email, password, name) =>
     request('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password, name: name || undefined }),
+    }),
+
+  /** POST /auth/register/verify → { access_token, user } */
+  verifyRegistration: (email, code) =>
+    request('/auth/register/verify', {
+      method: 'POST',
+      body: JSON.stringify({ email, code }),
+    }),
+
+  /** POST /auth/register/resend → { message } */
+  resendRegistrationCode: (email) =>
+    request('/auth/register/resend', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
     }),
 
   /** GET /auth/profile → user */
@@ -66,7 +80,29 @@ export const authApi = {
   /** OAuth redirect URLs */
   googleAuthUrl: () => `${API_BASE}/auth/google`,
   githubAuthUrl: () => `${API_BASE}/auth/github`,
+
+  /** POST /auth/forgot-password */
+  forgotPassword: (email) =>
+    request('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+
+  /** POST /auth/verify-reset-code – validates OTP without consuming it */
+  verifyResetCode: (email, code) =>
+    request('/auth/verify-reset-code', {
+      method: 'POST',
+      body: JSON.stringify({ email, code }),
+    }),
+
+  /** POST /auth/reset-password */
+  resetPassword: (email, code, newPassword) =>
+    request('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ email, code, newPassword }),
+    }),
 };
+
 
 // ─── Users ───────────────────────────────────────────────────────────────────
 
@@ -245,5 +281,9 @@ export const trashApi = {
   /** DELETE /trash/permanent/:type/:id */
   permanentDelete: (type, id) =>
     request(`/trash/permanent/${type}/${id}`, { method: 'DELETE' }),
+
+  /** DELETE /trash/clear-all – permanently deletes ALL trash items */
+  clearAll: () =>
+    request('/trash/clear-all', { method: 'DELETE' }),
 };
 

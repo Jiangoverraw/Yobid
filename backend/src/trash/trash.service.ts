@@ -299,4 +299,66 @@ export class TrashService {
 
     throw new BadRequestException(`Invalid type: ${type}`);
   }
+
+  /** Permanently delete ALL trash items visible to the user */
+  async clearAll(userId: number, userRole: Role): Promise<{ deleted: number }> {
+    const isSysAdmin = userRole === Role.ADMIN;
+    let totalDeleted = 0;
+
+    // ── Tasks ──────────────────────────────────────────────────────────────
+    const taskWhere: any = {
+      isDeleted: true,
+      project: { isDeleted: false, workspace: { isDeleted: false } },
+    };
+    if (!isSysAdmin) taskWhere.deletedById = userId;
+
+    const tasks = await this.prisma.task.findMany({
+      where: taskWhere,
+      select: { id: true },
+    });
+    if (tasks.length > 0) {
+      const taskIds = tasks.map((t) => t.id);
+      const result = await this.prisma.task.deleteMany({
+        where: { id: { in: taskIds } },
+      });
+      totalDeleted += result.count;
+    }
+
+    // ── Projects ───────────────────────────────────────────────────────────
+    const projectWhere: any = {
+      isDeleted: true,
+      workspace: { isDeleted: false },
+    };
+    if (!isSysAdmin) projectWhere.deletedById = userId;
+
+    const projects = await this.prisma.project.findMany({
+      where: projectWhere,
+      select: { id: true },
+    });
+    if (projects.length > 0) {
+      const projectIds = projects.map((p) => p.id);
+      const result = await this.prisma.project.deleteMany({
+        where: { id: { in: projectIds } },
+      });
+      totalDeleted += result.count;
+    }
+
+    // ── Workspaces ─────────────────────────────────────────────────────────
+    const workspaceWhere: any = { isDeleted: true };
+    if (!isSysAdmin) workspaceWhere.deletedById = userId;
+
+    const workspaces = await this.prisma.workspace.findMany({
+      where: workspaceWhere,
+      select: { id: true },
+    });
+    if (workspaces.length > 0) {
+      const wsIds = workspaces.map((w) => w.id);
+      const result = await this.prisma.workspace.deleteMany({
+        where: { id: { in: wsIds } },
+      });
+      totalDeleted += result.count;
+    }
+
+    return { deleted: totalDeleted };
+  }
 }

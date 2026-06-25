@@ -32,13 +32,14 @@ export function AuthProvider({ children }) {
   }, []);
 
   // ── Login: store token + set user ───────────────────────────────────────
-  const login = useCallback(async (email, password) => {
-    const data = await authApi.login(email, password);
+  const login = useCallback(async (email, password, rememberMe = false) => {
+    const data = await authApi.login(email, password, rememberMe);
     localStorage.setItem('access_token', data.access_token);
     localStorage.setItem('user', JSON.stringify(data.user));
     setUser(data.user);
     return data;
   }, []);
+
 
   // ── Login from OAuth token (received via redirect) ───────────────────────
   const loginWithToken = useCallback(async (token) => {
