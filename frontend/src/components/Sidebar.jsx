@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Calendar, Sparkles, Users, Settings, Shield, UserPlus, ArrowUpCircle } from 'lucide-react';
+import { Home, Calendar, Sparkles, Users, Settings, Shield, UserPlus, ArrowUpCircle, ChevronsRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export default function Sidebar({ sidebarOpen, toggleSidebar }) {
+export default function Sidebar({ sidebarOpen, toggleSidebar, lightSidebarOpen, onExpandLightSidebar }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,6 +25,19 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
 
       {/* Nav Links */}
       <nav className="dash-nav-links">
+        {/* If the light-gray sidebar is collapsed, show the expand (>>) button at the top */}
+        {!lightSidebarOpen && (
+          <button
+            onClick={onExpandLightSidebar}
+            className="dash-nav-item"
+            style={{ marginBottom: '0.5rem', background: 'rgba(255,255,255,0.1)', color: '#fff' }}
+            title="Expand Sidebar"
+          >
+            <ChevronsRight size={20} />
+            <span style={{ fontSize: '9px', color: '#fff' }}>Expand</span>
+          </button>
+        )}
+
         <button
           onClick={() => navigate('/dashboard')}
           className={`dash-nav-item ${path === '/dashboard' ? 'dash-nav-item--active' : ''}`}

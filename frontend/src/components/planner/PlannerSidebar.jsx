@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Plus, MoreHorizontal, Pencil, Link, Copy, Archive, Trash2, List as ListIcon, FolderKanban, Calendar as CalendarIcon, MessageSquare } from 'lucide-react';
+import { LayoutGrid, Plus, MoreHorizontal, Pencil, Link, Copy, Archive, Trash2, List as ListIcon, FolderKanban, Calendar as CalendarIcon, MessageSquare, ChevronsLeft, Search } from 'lucide-react';
 
 export default function PlannerSidebar({
   workspaceName,
@@ -15,10 +15,40 @@ export default function PlannerSidebar({
   activeTab,
   setActiveTab,
   setSpaceName,
-  setShowSpaceModal
+  setShowSpaceModal,
+  lightSidebarOpen,
+  setLightSidebarOpen
 }) {
   return (
-    <div className="planner-sidebar">
+    <div
+      className="planner-sidebar"
+      style={!lightSidebarOpen ? { width: 0, padding: 0, margin: 0, overflow: 'hidden', border: 'none' } : {}}
+    >
+      {/* Sidebar Header Row with Collapse and Search */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #f1f5f9' }}>
+        <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#1e293b' }}>
+          {activeSpaceId === 'home' ? 'Home' : (spaces.find(s => s.id === activeSpaceId)?.name || 'Space')}
+        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Search size={14} style={{ color: '#94a3b8', cursor: 'pointer' }} onClick={() => alert("Search is coming soon! (mock action)")} />
+          <ChevronsLeft
+            size={16}
+            style={{ color: '#94a3b8', cursor: 'pointer' }}
+            onClick={() => setLightSidebarOpen(false)}
+            title="Collapse Sidebar"
+          />
+          <button
+            onClick={() => {
+              setSpaceName('');
+              setShowSpaceModal(true);
+            }}
+            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
+            title="Create Space"
+          >
+            <Plus size={14} />
+          </button>
+        </div>
+      </div>
 
 
       {/* Workspace Home Section */}

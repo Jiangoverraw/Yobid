@@ -66,6 +66,8 @@ export default function PlannerBoard(props) {
         setActiveTab={board.setActiveTab}
         setSpaceName={board.setSpaceName}
         setShowSpaceModal={board.setShowSpaceModal}
+        lightSidebarOpen={props.lightSidebarOpen}
+        setLightSidebarOpen={props.setLightSidebarOpen}
       />
 
       {/* Right Main Space Container */}

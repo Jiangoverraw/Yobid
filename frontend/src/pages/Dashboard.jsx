@@ -54,6 +54,7 @@ export default function Dashboard() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [activePath, setActivePath] = useState({ spaceName: 'Home', tabName: '' });
   const [workspaceInfo, setWorkspaceInfo] = useState({ name: '', onRename: null });
+  const [lightSidebarOpen, setLightSidebarOpen] = useState(true);
 
   const handleStateChange = useCallback((spaceName, tabName) => {
     setActivePath(prev => {
@@ -124,7 +125,12 @@ export default function Dashboard() {
     <div className={`dash-page ${sidebarOpen ? '' : 'dash-page--collapsed'}`}>
 
       {/* Sidebar */}
-      <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        toggleSidebar={toggleSidebar}
+        lightSidebarOpen={lightSidebarOpen}
+        onExpandLightSidebar={() => setLightSidebarOpen(true)}
+      />
 
       {/* Main content */}
       <div className="dash-main">
@@ -295,7 +301,12 @@ export default function Dashboard() {
         {/* Body */}
         <div className="dash-body dash-body--planner">
           {/* Planner board replacing account info */}
-          <PlannerBoard onStateChange={handleStateChange} onWorkspaceInfo={setWorkspaceInfo} />
+          <PlannerBoard
+            onStateChange={handleStateChange}
+            onWorkspaceInfo={setWorkspaceInfo}
+            lightSidebarOpen={lightSidebarOpen}
+            setLightSidebarOpen={setLightSidebarOpen}
+          />
         </div>
       </div>
     </div>
