@@ -1391,8 +1391,9 @@ body {
   position: sticky;
   top: 0;
   height: 100vh;
-  overflow-y: auto;
+  overflow: visible;
 }
+
 
 .dash-sidebar-logo {
   display: flex;
@@ -1845,8 +1846,9 @@ body {
   width: 68px;
   padding: 1.5rem 0.625rem;
   transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  overflow: visible;
 }
+
 
 .dash-sidebar--closed .dash-sidebar-logo {
   justify-content: center;
@@ -1863,28 +1865,33 @@ body {
   display: none;
 }
 
-/* ─── Sidebar Toggle Button ─── */
+/* ─── Sidebar Toggle Button (Trapezoid tab – inside) ─── */
 .dash-sidebar-toggle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.7);
+  width: 16px;
+  height: 36px;
+  border: none;
+  /* Trapezoid: wider on right (outer edge), tapers to left */
+  clip-path: polygon(40% 0%, 100% 10%, 100% 90%, 40% 100%, 0% 60%, 0% 40%);
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
   cursor: pointer;
-  margin: 1rem auto 0;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  z-index: 10;
+  transition: background 0.2s;
   flex-shrink: 0;
+  padding: 0;
 }
 
 .dash-sidebar-toggle:hover {
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.32);
 }
+
 
 /* ─── Profile Dropdown ─── */
 .dash-profile-dropdown {

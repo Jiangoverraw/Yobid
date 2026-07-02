@@ -1,9 +1,10 @@
 import { Injectable, ConflictException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { Role, WorkspaceRole } from '@prisma/client';
+import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { MailService } from './mail.service';
+import { AuthResetService } from './auth-reset.service';
 import * as dns from 'dns';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class AuthService {
     private jwtService: JwtService,
     private prisma: PrismaService,
     private mailService: MailService,
+    private resetService: AuthResetService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
@@ -113,7 +115,6 @@ export class AuthService {
   // ─── Login ────────────────────────────────────────────────────────────────
 
   async login(user: any, rememberMe = false) {
-    // Block unverified local accounts
     if (!user.isEmailVerified && !user.provider) {
       throw new ForbiddenException(
         'Please verify your email before logging in. Check your inbox for the verification code.',
@@ -197,7 +198,6 @@ export class AuthService {
       return result;
     }
 
-    // Brand new OAuth user – email is pre-verified by provider
     user = await this.prisma.user.create({
       data: {
         email,
@@ -206,7 +206,7 @@ export class AuthService {
         providerId,
         password: null,
         role: Role.MEMBER,
-        isEmailVerified: true, // OAuth providers verify email
+        isEmailVerified: true,
       },
     });
 
@@ -263,117 +263,25 @@ export class AuthService {
     return result;
   }
 
-  // ─── OTP helpers (Google OAuth 2FA) ──────────────────────────────────────
+  // ─── Delegate OTP & Password Reset to AuthResetService ────────────────────
 
-  async generateAndSendOTP(email: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new Error('User with this email not found');
-    }
-
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
-
-    await this.prisma.user.update({
-      where: { email },
-      data: {
-        otpCode: code,
-        otpExpiresAt: expiresAt,
-      },
-    });
-
-    await this.mailService.sendVerificationCode(email, code);
+  generateAndSendOTP(email: string): Promise<void> {
+    return this.resetService.generateAndSendOTP(email);
   }
 
-  async verifyOTP(email: string, code: string): Promise<any> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    if (!user.otpCode || user.otpCode !== code) {
-      throw new Error('Invalid verification code');
-    }
-
-    if (!user.otpExpiresAt || user.otpExpiresAt < new Date()) {
-      throw new Error('Verification code has expired');
-    }
-
-    // Clear OTP
-    const updatedUser = await this.prisma.user.update({
-      where: { email },
-      data: {
-        otpCode: null,
-        otpExpiresAt: null,
-      },
-    });
-
-    return updatedUser;
+  verifyOTP(email: string, code: string): Promise<any> {
+    return this.resetService.verifyOTP(email, code);
   }
 
-  // ─── Password reset ───────────────────────────────────────────────────────
-
-  async forgotPassword(email: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new BadRequestException('Email not found in the system');
-    }
-
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
-
-    await this.prisma.user.update({
-      where: { email },
-      data: {
-        otpCode: code,
-        otpExpiresAt: expiresAt,
-      },
-    });
-
-    await this.mailService.sendPasswordResetCode(email, code);
+  forgotPassword(email: string): Promise<void> {
+    return this.resetService.forgotPassword(email);
   }
 
-  async verifyResetCode(email: string, code: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    if (!user.otpCode || user.otpCode !== code) {
-      throw new BadRequestException('Invalid reset code');
-    }
-
-    if (!user.otpExpiresAt || user.otpExpiresAt < new Date()) {
-      throw new BadRequestException('Reset code has expired');
-    }
+  verifyResetCode(email: string, code: string): Promise<void> {
+    return this.resetService.verifyResetCode(email, code);
   }
 
-  async resetPassword(email: string, code: string, pass: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    if (!user.otpCode || user.otpCode !== code) {
-      throw new BadRequestException('Invalid reset code');
-    }
-
-    if (!user.otpExpiresAt || user.otpExpiresAt < new Date()) {
-      throw new BadRequestException('Reset code has expired');
-    }
-
-    const hashedPassword = await bcrypt.hash(pass, 10);
-
-    await this.prisma.user.update({
-      where: { email },
-      data: {
-        password: hashedPassword,
-        otpCode: null,
-        otpExpiresAt: null,
-      },
-    });
+  resetPassword(email: string, code: string, pass: string): Promise<void> {
+    return this.resetService.resetPassword(email, code, pass);
   }
 }

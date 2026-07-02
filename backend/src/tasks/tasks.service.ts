@@ -6,35 +6,18 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { Role, TaskStatus, Priority, ProjectRole } from '@prisma/client';
 import { NotificationsService } from '../notifications/notifications.service';
+import { TasksSubtasksService } from './tasks-subtasks.service';
+import { TasksCommentsService } from './tasks-comments.service';
+import { assertProjectAccess, assertProjectManager } from './tasks-auth';
 
 @Injectable()
 export class TasksService {
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
+    private subtasksService: TasksSubtasksService,
+    private commentsService: TasksCommentsService,
   ) {}
-
-  /** Assert user is a member of the project */
-  private async assertProjectAccess(projectId: number, userId: number, userRole: Role) {
-    if (userRole === Role.ADMIN) return;
-    const member = await this.prisma.projectMember.findUnique({
-      where: { projectId_userId: { projectId, userId } },
-    });
-    if (!member) {
-      throw new ForbiddenException('You are not a member of this project');
-    }
-  }
-
-  /** Assert user is a project manager */
-  private async assertProjectManager(projectId: number, userId: number, userRole: Role) {
-    if (userRole === Role.ADMIN) return;
-    const member = await this.prisma.projectMember.findUnique({
-      where: { projectId_userId: { projectId, userId } },
-    });
-    if (!member || member.role !== ProjectRole.MANAGER) {
-      throw new ForbiddenException('Only project managers or ADMIN can perform this action');
-    }
-  }
 
   /** Create a task */
   async create(
@@ -55,7 +38,7 @@ export class TasksService {
     });
     if (!project) throw new NotFoundException(`Project ${data.projectId} not found`);
 
-    await this.assertProjectManager(data.projectId, userId, userRole);
+    await assertProjectManager(this.prisma, data.projectId, userId, userRole);
 
     // Get max position for the status column
     const maxPos = await this.prisma.task.aggregate({
@@ -103,7 +86,7 @@ export class TasksService {
     userRole: Role,
     filters?: { status?: TaskStatus; assigneeId?: number; priority?: Priority },
   ) {
-    await this.assertProjectAccess(projectId, userId, userRole);
+    await assertProjectAccess(this.prisma, projectId, userId, userRole);
 
     const where: any = { projectId, isDeleted: false };
     if (filters?.status) where.status = filters.status;
@@ -148,7 +131,7 @@ export class TasksService {
       throw new NotFoundException(`Task ${id} not found`);
     }
 
-    await this.assertProjectAccess(task.projectId, userId, userRole);
+    await assertProjectAccess(this.prisma, task.projectId, userId, userRole);
 
     return task;
   }
@@ -239,7 +222,7 @@ export class TasksService {
       throw new NotFoundException(`Task ${id} not found`);
     }
 
-    await this.assertProjectAccess(task.projectId, userId, userRole);
+    await assertProjectAccess(this.prisma, task.projectId, userId, userRole);
 
     await this.prisma.task.update({
       where: { id },
@@ -252,144 +235,31 @@ export class TasksService {
     return { message: 'Task deleted successfully' };
   }
 
-  // ─── Subtasks ─────────────────────────────────────────────────────────────
+  // ─── Delegate Subtasks to TasksSubtasksService ─────────────────────────────
 
-  async createSubtask(
-    taskId: number,
-    data: { title: string; assigneeId?: number },
-    userId: number,
-    userRole: Role,
-  ) {
-    const task = await this.prisma.task.findUnique({ where: { id: taskId } });
-    if (!task) throw new NotFoundException(`Task ${taskId} not found`);
-
-    await this.assertProjectManager(task.projectId, userId, userRole);
-
-    return this.prisma.subtask.create({
-      data: { taskId, title: data.title, assigneeId: data.assigneeId },
-      include: {
-        assignee: { select: { id: true, name: true, avatar: true } },
-      },
-    });
+  createSubtask(taskId: number, data: { title: string; assigneeId?: number }, userId: number, userRole: Role) {
+    return this.subtasksService.createSubtask(taskId, data, userId, userRole);
   }
 
-  async updateSubtask(
-    subtaskId: number,
-    data: { title?: string; isCompleted?: boolean; assigneeId?: number },
-    userId: number,
-    userRole: Role,
-  ) {
-    const subtask = await this.prisma.subtask.findUnique({
-      where: { id: subtaskId },
-      include: { task: true },
-    });
-    if (!subtask) throw new NotFoundException(`Subtask ${subtaskId} not found`);
-
-    await this.assertProjectAccess(subtask.task.projectId, userId, userRole);
-
-    return this.prisma.subtask.update({
-      where: { id: subtaskId },
-      data,
-      include: {
-        assignee: { select: { id: true, name: true, avatar: true } },
-      },
-    });
+  updateSubtask(subtaskId: number, data: { title?: string; isCompleted?: boolean; assigneeId?: number }, userId: number, userRole: Role) {
+    return this.subtasksService.updateSubtask(subtaskId, data, userId, userRole);
   }
 
-  async deleteSubtask(subtaskId: number, userId: number, userRole: Role) {
-    const subtask = await this.prisma.subtask.findUnique({
-      where: { id: subtaskId },
-      include: { task: true },
-    });
-    if (!subtask) throw new NotFoundException(`Subtask ${subtaskId} not found`);
-
-    await this.assertProjectManager(subtask.task.projectId, userId, userRole);
-
-    await this.prisma.subtask.delete({ where: { id: subtaskId } });
-    return { message: 'Subtask deleted' };
+  deleteSubtask(subtaskId: number, userId: number, userRole: Role) {
+    return this.subtasksService.deleteSubtask(subtaskId, userId, userRole);
   }
 
-  // ─── Comments ─────────────────────────────────────────────────────────────
+  // ─── Delegate Comments to TasksCommentsService ─────────────────────────────
 
-  async createComment(
-    taskId: number,
-    content: string,
-    userId: number,
-    userRole: Role,
-  ) {
-    const task = await this.prisma.task.findUnique({ where: { id: taskId } });
-    if (!task) throw new NotFoundException(`Task ${taskId} not found`);
-
-    await this.assertProjectAccess(task.projectId, userId, userRole);
-
-    const comment = await this.prisma.comment.create({
-      data: { taskId, content, authorId: userId },
-      include: {
-        author: { select: { id: true, name: true, avatar: true } },
-      },
-    });
-
-    // Notify task assignee if someone else commented
-    if (task.assigneeId && task.assigneeId !== userId) {
-      await this.notificationsService.create({
-        userId: task.assigneeId,
-        title: 'New Comment on Your Task',
-        message: `Someone commented on "${task.title}"`,
-        type: 'INFO',
-        link: `/projects/${task.projectId}/tasks/${taskId}`,
-      });
-    }
-
-    return comment;
+  createComment(taskId: number, content: string, userId: number, userRole: Role) {
+    return this.commentsService.createComment(taskId, content, userId, userRole);
   }
 
-  async updateComment(
-    commentId: number,
-    content: string,
-    userId: number,
-    userRole: Role,
-  ) {
-    const comment = await this.prisma.comment.findUnique({ where: { id: commentId } });
-    if (!comment) throw new NotFoundException(`Comment ${commentId} not found`);
-
-    if (userRole !== Role.ADMIN && comment.authorId !== userId) {
-      throw new ForbiddenException('You can only edit your own comments');
-    }
-
-    return this.prisma.comment.update({
-      where: { id: commentId },
-      data: { content },
-      include: {
-        author: { select: { id: true, name: true, avatar: true } },
-      },
-    });
+  updateComment(commentId: number, content: string, userId: number, userRole: Role) {
+    return this.commentsService.updateComment(commentId, content, userId, userRole);
   }
 
-  async deleteComment(commentId: number, userId: number, userRole: Role) {
-    const comment = await this.prisma.comment.findUnique({
-      where: { id: commentId },
-      include: { task: true },
-    });
-    if (!comment) throw new NotFoundException(`Comment ${commentId} not found`);
-
-    const isManager =
-      userRole === Role.ADMIN ||
-      (await this.prisma.projectMember
-        .findUnique({
-          where: {
-            projectId_userId: {
-              projectId: comment.task.projectId,
-              userId,
-            },
-          },
-        })
-        .then((m) => m?.role === ProjectRole.MANAGER));
-
-    if (!isManager && comment.authorId !== userId) {
-      throw new ForbiddenException('You can only delete your own comments');
-    }
-
-    await this.prisma.comment.delete({ where: { id: commentId } });
-    return { message: 'Comment deleted' };
+  deleteComment(commentId: number, userId: number, userRole: Role) {
+    return this.commentsService.deleteComment(commentId, userId, userRole);
   }
 }
