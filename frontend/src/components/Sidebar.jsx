@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Database, Shield, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Home, Calendar, Sparkles, Users, Settings, Shield, UserPlus, ArrowUpCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Sidebar({ sidebarOpen, toggleSidebar }) {
@@ -12,7 +12,8 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
   const path = location.pathname;
 
   return (
-    <aside className={`dash-sidebar ${sidebarOpen ? 'dash-sidebar--open' : 'dash-sidebar--closed'}`}>
+    <aside className="dash-sidebar">
+      {/* Logo Area */}
       <div className="dash-sidebar-logo">
         <div className="dash-sidebar-icon">
           <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
@@ -20,49 +21,89 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
             <circle cx="14" cy="14" r="12" stroke="white" strokeWidth="2" opacity="0.3"/>
           </svg>
         </div>
-        {sidebarOpen && <span className="dash-sidebar-brand">Yobid</span>}
       </div>
 
+      {/* Nav Links */}
       <nav className="dash-nav-links">
         <button
           onClick={() => navigate('/dashboard')}
           className={`dash-nav-item ${path === '/dashboard' ? 'dash-nav-item--active' : ''}`}
-          style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+          title="Home"
         >
-          <LayoutDashboard size={18} />
-          {sidebarOpen && <span>Dashboard</span>}
+          <Home size={20} />
+          <span>Home</span>
         </button>
+
         <button
           onClick={() => navigate('/workspaces')}
           className={`dash-nav-item ${path.startsWith('/workspaces') ? 'dash-nav-item--active' : ''}`}
-          style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+          title="Planner"
         >
-          <Database size={18} />
-          {sidebarOpen && <span>Workspaces</span>}
+          <Calendar size={20} />
+          <span>Planner</span>
         </button>
+
+        <button
+          onClick={() => alert("AI chat is ready to help! (mock action)")}
+          className="dash-nav-item"
+          title="AI"
+        >
+          <Sparkles size={20} />
+          <span>AI</span>
+        </button>
+
+        <button
+          onClick={() => alert("Teams panel is coming soon! (mock action)")}
+          className="dash-nav-item"
+          title="Teams"
+        >
+          <Users size={20} />
+          <span>Teams</span>
+        </button>
+
         {isAdmin && (
           <button
             onClick={() => navigate('/admin')}
             className={`dash-nav-item ${path === '/admin' ? 'dash-nav-item--active' : ''}`}
-            style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+            title="Admin"
           >
-            <Shield size={18} />
-            {sidebarOpen && <span>Admin Panel</span>}
+            <Shield size={20} />
+            <span>Admin</span>
           </button>
         )}
+
         <button
           onClick={() => navigate('/settings')}
           className={`dash-nav-item ${path.startsWith('/settings') ? 'dash-nav-item--active' : ''}`}
-          style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+          title="Settings"
         >
-          <Settings size={18} />
-          {sidebarOpen && <span>Settings</span>}
+          <Settings size={20} />
+          <span>Settings</span>
         </button>
       </nav>
 
-      <button className="dash-sidebar-toggle" onClick={toggleSidebar} aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}>
-        {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-      </button>
+      {/* Bottom Area: Invite & Upgrade */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '1rem', marginTop: 'auto' }}>
+        <button
+          onClick={() => alert("Invite link copied to clipboard! (mock action)")}
+          className="dash-nav-item"
+          style={{ padding: '0.25rem 0' }}
+          title="Invite"
+        >
+          <UserPlus size={20} />
+          <span>Invite</span>
+        </button>
+
+        <button
+          onClick={() => alert("Upgrade to Premium plan to unlock more features! (mock action)")}
+          className="dash-nav-item"
+          style={{ padding: '0.25rem 0' }}
+          title="Upgrade"
+        >
+          <ArrowUpCircle size={20} style={{ color: '#fbbf24' }} />
+          <span style={{ color: '#fbbf24' }}>Upgrade</span>
+        </button>
+      </div>
     </aside>
   );
 }
