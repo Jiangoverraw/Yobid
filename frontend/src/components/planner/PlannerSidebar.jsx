@@ -19,7 +19,6 @@ export default function PlannerSidebar({
 }) {
   return (
     <div className="planner-sidebar">
-      {/* Workspace Title Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '0.75rem', borderBottom: '1px solid #e2e8f0', marginBottom: '1rem' }}>
         <div
           className="group/ws"
@@ -56,19 +55,21 @@ export default function PlannerSidebar({
         </div>
       </div>
 
-      <h4 className="planner-sidebar-title flex items-center justify-between">
-        <span>Spaces</span>
+      {/* Spaces divider & plus button without "SPACES" heading */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.25rem', marginBottom: '0.5rem', borderTop: '1.5px solid #f1f5f9', paddingTop: '0.75rem' }}>
+        <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}></span>
         <button
           onClick={() => {
             setSpaceName('');
             setShowSpaceModal(true);
           }}
-          className="text-gray-400 hover:text-purple-600 cursor-pointer p-0.5 rounded-sm hover:bg-gray-200 transition-colors"
+          style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '2px' }}
+          className="hover:text-purple-600 flex items-center"
           title="Create Space"
         >
           <Plus size={14} />
         </button>
-      </h4>
+      </div>
 
       {/* Spaces list */}
       <div className="flex-1 space-y-1">

@@ -130,37 +130,7 @@ export default function Dashboard() {
         {/* Top bar */}
         <header className="dash-topbar">
           <div className="dash-topbar-left">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 className="dash-page-title" style={{ color: '#94a3b8', fontWeight: 500 }}>Dashboard</h2>
-              {activePath.spaceName && (
-                <>
-                  <span style={{ color: '#cbd5e1', fontWeight: 500 }}>/</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {activePath.spaceName !== 'Home' && (
-                      <span style={{
-                        width: '18px', height: '18px',
-                        backgroundColor: '#7c3aed', color: 'white',
-                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                        borderRadius: '4px', fontWeight: 'bold', fontSize: '9px'
-                      }}>
-                        {activePath.spaceName.charAt(0).toUpperCase()}
-                      </span>
-                    )}
-                    <span className="dash-page-title" style={{ color: '#1f2937', fontWeight: 700 }}>
-                      {activePath.spaceName}
-                    </span>
-                  </div>
-                </>
-              )}
-              {activePath.spaceName && activePath.spaceName !== 'Home' && activePath.tabName && (
-                <>
-                  <span style={{ color: '#cbd5e1', fontWeight: 500 }}>/</span>
-                  <span style={{ color: '#6b7280', fontSize: '0.875rem', fontWeight: 600, textTransform: 'capitalize' }}>
-                    {activePath.tabName}
-                  </span>
-                </>
-              )}
-            </div>
+            {/* Breadcrumbs are integrated into the workspaces box in the sidebar */}
           </div>
           <div className="dash-topbar-right">
             {/* Notifications bell with badge */}
