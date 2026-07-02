@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { usePlannerBoard } from '../hooks/usePlannerBoard';
 
@@ -24,6 +24,16 @@ export default function PlannerBoard(props) {
   })();
 
   const board = usePlannerBoard(userDisplayName, props.onStateChange);
+
+  // Send workspace info back up to Dashboard.jsx topbar
+  useEffect(() => {
+    if (props.onWorkspaceInfo) {
+      props.onWorkspaceInfo({
+        name: board.workspaceName,
+        onRename: board.handleRenameWorkspace
+      });
+    }
+  }, [board.workspaceName, board.handleRenameWorkspace, props.onWorkspaceInfo]);
 
   // Capitalize Tab names for display
   const tabDisplayLabel = board.activeTab.charAt(0).toUpperCase() + board.activeTab.slice(1);

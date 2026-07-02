@@ -19,27 +19,7 @@ export default function PlannerSidebar({
 }) {
   return (
     <div className="planner-sidebar">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '0.75rem', borderBottom: '1px solid #e2e8f0', marginBottom: '1rem' }}>
-        <div
-          className="group/ws"
-          onClick={handleRenameWorkspace}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: 0, flex: 1 }}
-          title="Rename Workspace"
-        >
-          <span style={{
-            width: '24px', height: '24px',
-            backgroundColor: '#7c3aed', color: 'white',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            borderRadius: '6px', fontWeight: 'bold', fontSize: '11px', flexShrink: 0
-          }}>
-            {workspaceName.charAt(0).toUpperCase()}
-          </span>
-          <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '140px' }}>
-            {workspaceName}
-          </span>
-          <Pencil size={11} className="text-gray-400 opacity-0 group-hover/ws:opacity-100 transition-opacity" style={{ marginLeft: '4px' }} />
-        </div>
-      </div>
+
 
       {/* Workspace Home Section */}
       <div className="mb-4">

@@ -53,6 +53,7 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [activePath, setActivePath] = useState({ spaceName: 'Home', tabName: '' });
+  const [workspaceInfo, setWorkspaceInfo] = useState({ name: '', onRename: null });
 
   const handleStateChange = useCallback((spaceName, tabName) => {
     setActivePath(prev => {
@@ -130,7 +131,27 @@ export default function Dashboard() {
         {/* Top bar */}
         <header className="dash-topbar">
           <div className="dash-topbar-left">
-            {/* Breadcrumbs are integrated into the workspaces box in the sidebar */}
+            {workspaceInfo.name && (
+              <div
+                className="group/ws"
+                onClick={workspaceInfo.onRename}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: 0 }}
+                title="Rename Workspace"
+              >
+                <span style={{
+                  width: '24px', height: '24px',
+                  backgroundColor: '#7c3aed', color: 'white',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: '6px', fontWeight: 'bold', fontSize: '11px', flexShrink: 0
+                }}>
+                  {workspaceInfo.name.charAt(0).toUpperCase()}
+                </span>
+                <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '140px' }}>
+                  {workspaceInfo.name}
+                </span>
+                <ChevronDown size={14} style={{ color: '#64748b', marginLeft: '2px' }} />
+              </div>
+            )}
           </div>
           <div className="dash-topbar-right">
             {/* Notifications bell with badge */}
@@ -274,7 +295,7 @@ export default function Dashboard() {
         {/* Body */}
         <div className="dash-body dash-body--planner">
           {/* Planner board replacing account info */}
-          <PlannerBoard onStateChange={handleStateChange} />
+          <PlannerBoard onStateChange={handleStateChange} onWorkspaceInfo={setWorkspaceInfo} />
         </div>
       </div>
     </div>
