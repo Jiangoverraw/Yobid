@@ -20,10 +20,7 @@ export default function PlannerSidebar({
   setLightSidebarOpen
 }) {
   return (
-    <div
-      className="planner-sidebar"
-      style={!lightSidebarOpen ? { width: 0, padding: 0, margin: 0, overflow: 'hidden', border: 'none' } : {}}
-    >
+    <div className={`planner-sidebar ${!lightSidebarOpen ? 'planner-sidebar--collapsed' : ''}`}>
       {/* Sidebar Header Row with Collapse and Search */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #f1f5f9' }}>
         <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#1e293b' }}>
