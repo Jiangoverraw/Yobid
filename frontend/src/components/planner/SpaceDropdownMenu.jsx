@@ -6,11 +6,13 @@ export default function SpaceDropdownMenu({
   handleRenameSpace,
   handleCycleSpaceColor,
   handleDeleteSpace,
-  onClose
+  onClose,
+  style
 }) {
   return (
     <div
       className="planner-space-dropdown"
+      style={style}
       onClick={(e) => e.stopPropagation()}
     >
       <button

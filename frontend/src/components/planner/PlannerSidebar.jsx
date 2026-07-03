@@ -22,6 +22,8 @@ export default function PlannerSidebar({
   sidebarWidth,
   onMouseDownResizer
 }) {
+  const [menuPosition, setMenuPosition] = React.useState({ top: 0, left: 0 });
+
   return (
     <div
       className={`planner-sidebar ${!lightSidebarOpen ? 'planner-sidebar--collapsed' : ''}`}
@@ -203,7 +205,18 @@ export default function PlannerSidebar({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setActiveMenuSpaceId(activeMenuSpaceId === space.id ? null : space.id);
+                        const isOpening = activeMenuSpaceId !== space.id;
+                        setActiveMenuSpaceId(isOpening ? space.id : null);
+                        if (isOpening) {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const menuHeight = 240; // Estimated menu height
+                          const topPos = Math.min(rect.top, window.innerHeight - menuHeight - 10);
+                          const leftPos = rect.right + 8;
+                          setMenuPosition({
+                            top: Math.max(10, topPos),
+                            left: leftPos
+                          });
+                        }
                       }}
                       style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
                     >
@@ -219,6 +232,13 @@ export default function PlannerSidebar({
                       handleCycleSpaceColor={handleCycleSpaceColor}
                       handleDeleteSpace={handleDeleteSpace}
                       onClose={() => setActiveMenuSpaceId(null)}
+                      style={{
+                        position: 'fixed',
+                        top: `${menuPosition.top}px`,
+                        left: `${menuPosition.left}px`,
+                        right: 'auto',
+                        margin: 0
+                      }}
                     />
                   )}
 
