@@ -21,10 +21,9 @@ export default function Sidebar({ sidebarOpen, toggleSidebar, lightSidebarOpen =
         <button
           onClick={onExpandLightSidebar}
           className={`dash-nav-item dash-nav-item--expand-btn ${!lightSidebarOpen ? 'dash-nav-item--expand-btn-active' : ''}`}
-          style={{ background: 'rgba(255,255,255,0.1)', color: '#fff' }}
           title="Expand Sidebar"
         >
-          <ChevronsRight size={20} />
+          <ChevronsRight />
         </button>
 
         <button

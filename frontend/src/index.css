@@ -1910,6 +1910,26 @@ body {
   background: rgba(255, 255, 255, 0.08) !important;
 }
 
+.dash-nav-item--expand-btn {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 auto 0.75rem auto !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dash-nav-item--expand-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+
 .dash-nav-item--active {
   background: rgba(255, 255, 255, 0.14) !important;
   color: #fff !important;
