@@ -1961,10 +1961,11 @@ body {
 }
 
 .dash-nav-item--expand-btn-active {
-  height: 52px !important;
-  padding-top: 0.6rem !important;
-  padding-bottom: 0.6rem !important;
-  margin-bottom: 0.5rem !important;
+  height: 30px !important;
+  width: 30px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0.75rem !important;
   opacity: 1 !important;
   pointer-events: auto !important;
 }
