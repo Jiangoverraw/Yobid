@@ -38,8 +38,8 @@ export default function Sidebar({ sidebarOpen, toggleSidebar, lightSidebarOpen =
         </button>
 
         <button
-          onClick={() => navigate('/workspaces')}
-          className={`dash-nav-item ${path.startsWith('/workspaces') ? 'dash-nav-item--active' : ''}`}
+          onClick={() => navigate('/planner')}
+          className={`dash-nav-item ${path.startsWith('/planner') ? 'dash-nav-item--active' : ''}`}
           title="Planner"
         >
           <Calendar size={20} />

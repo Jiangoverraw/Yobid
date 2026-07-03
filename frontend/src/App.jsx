@@ -10,6 +10,7 @@ import Settings from './pages/Settings';
 import AdminPage from './pages/AdminPage';
 import WorkspacesPage from './pages/WorkspacesPage';
 import WorkspaceDetailPage from './pages/WorkspaceDetailPage';
+import PlannerPage from './pages/PlannerPage';
 import { Loader2 } from 'lucide-react';
 
 /** Redirect already-logged-in users away from auth pages */
@@ -48,6 +49,7 @@ function App() {
           {/* ── Protected: All authenticated users ── */}
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/settings"  element={<PrivateRoute><Settings /></PrivateRoute>} />
+          <Route path="/planner"   element={<PrivateRoute><PlannerPage /></PrivateRoute>} />
 
           {/* ── Protected: MEMBER + PM + ADMIN (anyone authenticated) ── */}
           <Route path="/workspaces"     element={<PrivateRoute><WorkspacesPage /></PrivateRoute>} />
