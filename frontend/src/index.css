@@ -3205,3 +3205,39 @@ body {
   height: 100%;
   overflow: hidden;
 }
+
+/* Custom transparent & compact scrollbars that show on hover */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 99px;
+  transition: background-color 0.2s ease;
+}
+
+/* Show scrollbar thumb on hover of scrollable areas */
+*:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 116, 139, 0.25);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 116, 139, 0.5) !important;
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: rgba(100, 116, 139, 0.25) transparent;
+}
