@@ -139,9 +139,8 @@ export default function Dashboard() {
           <div className="dash-topbar-left">
             {workspaceInfo.name && (
               <div
-                className="group/ws"
+                className="dash-ws-pill"
                 onClick={workspaceInfo.onRename}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', minWidth: 0 }}
                 title="Rename Workspace"
               >
                 <span style={{
