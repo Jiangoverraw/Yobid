@@ -1882,10 +1882,14 @@ body {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 4px !important;
-  padding: 0.4rem 0.15rem !important;
+  gap: 2px !important;
+  padding: 0 !important;
   border-radius: 8px !important;
-  width: 100% !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  margin: 0 auto 0.25rem auto !important;
   text-align: center !important;
   background: transparent !important;
   border: none !important;
@@ -3227,29 +3231,11 @@ body {
   overflow: hidden;
 }
 
-/* Custom transparent & compact scrollbars that show normally when overflowed */
+/* Hide scrollbars completely across the app */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-  background-color: transparent;
+  display: none !important;
 }
 
-::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 116, 139, 0.2);
-  border-radius: 99px;
-  transition: background-color 0.2s ease;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(100, 116, 139, 0.45) !important;
-}
-
-/* Firefox support */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(100, 116, 139, 0.2) transparent;
+  scrollbar-width: none !important;
 }
