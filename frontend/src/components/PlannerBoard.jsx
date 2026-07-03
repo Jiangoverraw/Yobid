@@ -38,6 +38,30 @@ export default function PlannerBoard(props) {
   // Capitalize Tab names for display
   const tabDisplayLabel = board.activeTab.charAt(0).toUpperCase() + board.activeTab.slice(1);
 
+  // Sidebar width state and drag event handler
+  const [sidebarWidth, setSidebarWidth] = React.useState(() => Number(localStorage.getItem('yobid_planner_sidebar_width') ?? 240));
+
+  const handleMouseDownResizer = (e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = sidebarWidth;
+    
+    const handleMouseMove = (moveEvent) => {
+      const deltaX = moveEvent.clientX - startX;
+      const newWidth = Math.max(160, Math.min(400, startWidth + deltaX));
+      setSidebarWidth(newWidth);
+      localStorage.setItem('yobid_planner_sidebar_width', newWidth.toString());
+    };
+    
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
   // Filtering Tasks by Selected Space
   const filteredTasks = board.tasks.filter(t => {
     const taskSpace = t.spaceId || 'space-default';
@@ -68,6 +92,8 @@ export default function PlannerBoard(props) {
         setShowSpaceModal={board.setShowSpaceModal}
         lightSidebarOpen={props.lightSidebarOpen}
         setLightSidebarOpen={props.setLightSidebarOpen}
+        sidebarWidth={sidebarWidth}
+        onMouseDownResizer={handleMouseDownResizer}
       />
 
       {/* Right Main Space Container */}

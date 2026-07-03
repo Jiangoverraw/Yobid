@@ -1,5 +1,6 @@
 import React from 'react';
 import { LayoutGrid, Plus, MoreHorizontal, Pencil, Link, Copy, Archive, Trash2, List as ListIcon, FolderKanban, Calendar as CalendarIcon, MessageSquare, ChevronsLeft, Search, Inbox, CheckSquare, Sliders } from 'lucide-react';
+import SpaceDropdownMenu from './SpaceDropdownMenu';
 
 export default function PlannerSidebar({
   workspaceName,
@@ -17,10 +18,15 @@ export default function PlannerSidebar({
   setSpaceName,
   setShowSpaceModal,
   lightSidebarOpen,
-  setLightSidebarOpen
+  setLightSidebarOpen,
+  sidebarWidth,
+  onMouseDownResizer
 }) {
   return (
-    <div className={`planner-sidebar ${!lightSidebarOpen ? 'planner-sidebar--collapsed' : ''}`}>
+    <div
+      className={`planner-sidebar ${!lightSidebarOpen ? 'planner-sidebar--collapsed' : ''}`}
+      style={{ width: lightSidebarOpen ? sidebarWidth : 0 }}
+    >
       {/* Sidebar Header Row with Collapse and Search */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #f1f5f9' }}>
         <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#1e293b' }}>
@@ -189,92 +195,13 @@ export default function PlannerSidebar({
 
                   {/* Dropdown Menu */}
                   {activeMenuSpaceId === space.id && (
-                    <div
-                      className="planner-space-dropdown"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        onClick={() => {
-                          handleRenameSpace(space.id, space.name);
-                          setActiveMenuSpaceId(null);
-                        }}
-                        className="planner-space-dropdown-item"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Pencil size={12} className="text-gray-400" />
-                          <span>Rename</span>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          handleCycleSpaceColor(space.id, space.color);
-                        }}
-                        className="planner-space-dropdown-item"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: space.color, display: 'inline-block' }} />
-                          <span>Color & Icon</span>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(window.location.href);
-                          alert("Link copied to clipboard!");
-                          setActiveMenuSpaceId(null);
-                        }}
-                        className="planner-space-dropdown-item"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Link size={12} className="text-gray-400" />
-                          <span>Copy link</span>
-                        </div>
-                      </button>
-
-                      <div className="planner-space-dropdown-divider" />
-
-                      <div className="planner-space-dropdown-header">Actions</div>
-
-                      <button
-                        onClick={() => {
-                          alert("Space duplicated (mock action).");
-                          setActiveMenuSpaceId(null);
-                        }}
-                        className="planner-space-dropdown-item"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Copy size={12} className="text-gray-400" />
-                          <span>Duplicate</span>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          alert("Space archived (mock action).");
-                          setActiveMenuSpaceId(null);
-                        }}
-                        className="planner-space-dropdown-item"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Archive size={12} className="text-gray-400" />
-                          <span>Archive</span>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={(e) => {
-                          handleDeleteSpace(space.id, space.name, e);
-                          setActiveMenuSpaceId(null);
-                        }}
-                        className="planner-space-dropdown-item planner-space-dropdown-item--danger"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Trash2 size={12} />
-                          <span>Delete</span>
-                        </div>
-                      </button>
-                    </div>
+                    <SpaceDropdownMenu
+                      space={space}
+                      handleRenameSpace={handleRenameSpace}
+                      handleCycleSpaceColor={handleCycleSpaceColor}
+                      handleDeleteSpace={handleDeleteSpace}
+                      onClose={() => setActiveMenuSpaceId(null)}
+                    />
                   )}
 
                   {/* Under active space, show children */}
@@ -340,6 +267,27 @@ export default function PlannerSidebar({
         <Sliders size={12} style={{ color: '#64748b' }} />
         <span>Customize Sidebar</span>
       </button>
+
+      {/* Resize Handle / Drag bar */}
+      {lightSidebarOpen && (
+        <div
+          onMouseDown={onMouseDownResizer}
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            width: '4px',
+            cursor: 'col-resize',
+            zIndex: 50,
+            backgroundColor: 'transparent',
+            transition: 'background-color 0.2s'
+          }}
+          onMouseEnter={(e) => { e.target.style.backgroundColor = '#cbd5e1'; }}
+          onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; }}
+          title="Drag to resize sidebar"
+        />
+      )}
     </div>
   );
 }
