@@ -18,31 +18,6 @@ export default function WorkspaceHomeView({
 
   return (
     <div className="space-y-6 w-full" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Welcome Section */}
-      <div className="dash-welcome" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 60%, #4c1d95 100%)', borderRadius: '16px', padding: '1.75rem 2rem', color: '#fff', boxShadow: '0 8px 28px rgba(109,40,217,0.28)' }}>
-        <div className="dash-welcome-text">
-          <h1 className="dash-welcome-title" style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0 0 6px 0', color: '#fff' }}>
-            {greeting}, {userDisplayName}! 👋
-          </h1>
-          <p className="dash-welcome-subtitle" style={{ fontSize: '0.875rem', color: 'rgba(233, 213, 255, 0.85)', margin: 0 }}>
-            Welcome back! Here's an overview of your active tasks and spaces.
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            padding: '4px 12px', borderRadius: '999px', fontSize: 12, fontWeight: 600,
-            color: '#06b6d4', background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.2)',
-          }}>
-            <Shield size={12} />
-            Active Member
-          </span>
-          <div className="dash-welcome-badge" style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.15)', padding: '4px 10px', borderRadius: '99px', fontSize: '11px' }}>
-            <Zap size={14} className="text-yellow-300" />
-            <span>ClickUp Enabled</span>
-          </div>
-        </div>
-      </div>
 
       {/* Stats Grid */}
       <div className="dash-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
