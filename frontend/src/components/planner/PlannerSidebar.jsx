@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Plus, MoreHorizontal, Pencil, Link, Copy, Archive, Trash2, List as ListIcon, FolderKanban, Calendar as CalendarIcon, MessageSquare, ChevronsLeft, Search } from 'lucide-react';
+import { LayoutGrid, Plus, MoreHorizontal, Pencil, Link, Copy, Archive, Trash2, List as ListIcon, FolderKanban, Calendar as CalendarIcon, MessageSquare, ChevronsLeft, Search, Inbox, CheckSquare, Sliders } from 'lucide-react';
 
 export default function PlannerSidebar({
   workspaceName,
@@ -48,199 +48,297 @@ export default function PlannerSidebar({
       </div>
 
 
-      {/* Workspace Home Section */}
-      <div className="mb-4">
-        <div
-          onClick={() => setActiveSpaceId('home')}
-          className={`planner-space-item ${activeSpaceId === 'home' ? 'planner-space-item--active' : ''}`}
-          style={{ display: 'flex', padding: '8px 10px', borderRadius: '8px', cursor: 'pointer', transition: 'background 0.15s' }}
-        >
-          <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', fontSize: '0.85rem', color: activeSpaceId === 'home' ? '#7c3aed' : '#334155' }}>
-            <LayoutGrid size={16} />
-            <span>Workspace Home</span>
+      {/* Main sidebar scrollable area */}
+      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', paddingRight: '4px' }} className="planner-sidebar-scrollable">
+        
+        {/* Home Items section */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <div
+            onClick={() => setActiveSpaceId('home')}
+            className={`planner-space-item ${activeSpaceId === 'home' ? 'planner-space-item--active' : ''}`}
+            style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
+          >
+            <Inbox size={14} style={{ color: '#64748b' }} />
+            <span style={{ fontWeight: 600 }}>Inbox</span>
+          </div>
+
+          <div
+            className="planner-space-item"
+            style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
+            onClick={() => alert("Assigned Comments is coming soon! (mock action)")}
+          >
+            <MessageSquare size={14} style={{ color: '#64748b' }} />
+            <span style={{ fontWeight: 600 }}>Assigned Comments</span>
+          </div>
+
+          {/* My Tasks collapsible group */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div
+              className="planner-space-item"
+              style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
+            >
+              <CheckSquare size={14} style={{ color: '#64748b' }} />
+              <span style={{ fontWeight: 600 }}>My Tasks</span>
+            </div>
+            
+            {/* Sub-items (indented) */}
+            <div style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <div
+                className="planner-space-item"
+                style={{ display: 'flex', padding: '5px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}
+                onClick={() => alert("Tasks assigned to me (mock action)")}
+              >
+                <span style={{ width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#7c3aed', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', fontWeight: 'bold' }}>J</span>
+                <span>Assigned to me</span>
+              </div>
+              <div
+                className="planner-space-item"
+                style={{ display: 'flex', padding: '5px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}
+                onClick={() => alert("Today & Overdue tasks (mock action)")}
+              >
+                <CalendarIcon size={12} style={{ color: '#94a3b8' }} />
+                <span>Today &amp; Overdue</span>
+              </div>
+              <div
+                className="planner-space-item"
+                style={{ display: 'flex', padding: '5px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}
+                onClick={() => alert("Personal list (mock action)")}
+              >
+                <ListIcon size={12} style={{ color: '#94a3b8' }} />
+                <span>Personal List</span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="planner-space-item"
+            style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
+            onClick={() => alert("More tools (mock action)")}
+          >
+            <MoreHorizontal size={14} style={{ color: '#64748b' }} />
+            <span style={{ fontWeight: 600 }}>More</span>
+          </div>
+        </div>
+
+        <div style={{ height: '1px', backgroundColor: '#f1f5f9' }} />
+
+        {/* AI Chats section */}
+        <div>
+          <span style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', display: 'block', marginBottom: '6px', paddingLeft: '8px' }}>AI Chats</span>
+          <div
+            className="planner-space-item"
+            style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748b' }}
+            onClick={() => alert("AI assistant ready to Ask, Build, Create!")}
+          >
+            <Plus size={14} style={{ color: '#a855f7' }} />
+            <span style={{ color: '#6366f1', fontWeight: 600 }}>Ask, Build, Create</span>
+          </div>
+        </div>
+
+        <div style={{ height: '1px', backgroundColor: '#f1f5f9' }} />
+
+        {/* Spaces Section */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', paddingLeft: '8px', paddingRight: '8px' }}>
+            <span style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Spaces</span>
+            <button
+              onClick={() => { setSpaceName(''); setShowSpaceModal(true); }}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
+            >
+              <Plus size={12} />
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            {/* All Tasks item */}
+            <div
+              onClick={() => setActiveSpaceId('home')}
+              className={`planner-space-item ${activeSpaceId === 'home' ? 'planner-space-item--active' : ''}`}
+              style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
+            >
+              <LayoutGrid size={14} style={{ color: '#64748b' }} />
+              <span style={{ fontWeight: 600 }}>All Tasks <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 500 }}>- {workspaceName}</span></span>
+            </div>
+
+            {/* Spaces list */}
+            {spaces.map(space => {
+              const isActive = space.id === activeSpaceId;
+              return (
+                <div key={space.id} style={{ position: 'relative' }}>
+                  <div
+                    onClick={() => setActiveSpaceId(space.id)}
+                    className={`planner-space-item ${isActive ? 'planner-space-item--active' : ''}`}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', borderRadius: '6px' }}
+                  >
+                    <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1, fontSize: '12px' }}>
+                      <span className="planner-space-icon" style={{ backgroundColor: space.color, width: '16px', height: '16px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '10px', fontWeight: 'bold' }}>
+                        {space.name.charAt(0)}
+                      </span>
+                      <span className="truncate max-w-[110px]" title={space.name}>{space.name}</span>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveMenuSpaceId(activeMenuSpaceId === space.id ? null : space.id);
+                      }}
+                      style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}
+                    >
+                      <MoreHorizontal size={12} />
+                    </button>
+                  </div>
+
+                  {/* Dropdown Menu */}
+                  {activeMenuSpaceId === space.id && (
+                    <div
+                      className="planner-space-dropdown"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        onClick={() => {
+                          handleRenameSpace(space.id, space.name);
+                          setActiveMenuSpaceId(null);
+                        }}
+                        className="planner-space-dropdown-item"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Pencil size={12} className="text-gray-400" />
+                          <span>Rename</span>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          handleCycleSpaceColor(space.id, space.color);
+                        }}
+                        className="planner-space-dropdown-item"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: space.color, display: 'inline-block' }} />
+                          <span>Color & Icon</span>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(window.location.href);
+                          alert("Link copied to clipboard!");
+                          setActiveMenuSpaceId(null);
+                        }}
+                        className="planner-space-dropdown-item"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Link size={12} className="text-gray-400" />
+                          <span>Copy link</span>
+                        </div>
+                      </button>
+
+                      <div className="planner-space-dropdown-divider" />
+
+                      <div className="planner-space-dropdown-header">Actions</div>
+
+                      <button
+                        onClick={() => {
+                          alert("Space duplicated (mock action).");
+                          setActiveMenuSpaceId(null);
+                        }}
+                        className="planner-space-dropdown-item"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Copy size={12} className="text-gray-400" />
+                          <span>Duplicate</span>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          alert("Space archived (mock action).");
+                          setActiveMenuSpaceId(null);
+                        }}
+                        className="planner-space-dropdown-item"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Archive size={12} className="text-gray-400" />
+                          <span>Archive</span>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          handleDeleteSpace(space.id, space.name, e);
+                          setActiveMenuSpaceId(null);
+                        }}
+                        className="planner-space-dropdown-item planner-space-dropdown-item--danger"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Trash2 size={12} />
+                          <span>Delete</span>
+                        </div>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Under active space, show children */}
+                  {isActive && (
+                    <div className="pl-6 pr-2 py-1 space-y-1 border-l border-gray-200 ml-4 mt-0.5 mb-1.5 text-[11px] text-gray-500 font-semibold">
+                      <div
+                        onClick={() => setActiveTab('list')}
+                        className={`flex items-center gap-1.5 py-1 px-2 rounded-sm cursor-pointer ${activeTab === 'list' ? 'bg-purple-50 text-purple-600' : 'hover:bg-gray-100 hover:text-gray-800'}`}
+                      >
+                        <ListIcon size={11} /> List
+                      </div>
+                      <div
+                        onClick={() => setActiveTab('board')}
+                        className={`flex items-center gap-1.5 py-1 px-2 rounded-sm cursor-pointer ${activeTab === 'board' ? 'bg-purple-50 text-purple-600' : 'hover:bg-gray-100 hover:text-gray-800'}`}
+                      >
+                        <FolderKanban size={11} /> Board
+                      </div>
+                      <div
+                        onClick={() => setActiveTab('calendar')}
+                        className={`flex items-center gap-1.5 py-1 px-2 rounded-sm cursor-pointer ${activeTab === 'calendar' ? 'bg-purple-50 text-purple-600' : 'hover:bg-gray-100 hover:text-gray-800'}`}
+                      >
+                        <CalendarIcon size={11} /> Calendar
+                      </div>
+                      <div
+                        onClick={() => setActiveTab('chat')}
+                        className={`flex items-center gap-1.5 py-1 px-2 rounded-sm cursor-pointer ${activeTab === 'chat' ? 'bg-purple-50 text-purple-600' : 'hover:bg-gray-100 hover:text-gray-800'}`}
+                      >
+                        <MessageSquare size={11} /> Chat
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Spaces divider & plus button without "SPACES" heading */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.25rem', marginBottom: '0.5rem', borderTop: '1.5px solid #f1f5f9', paddingTop: '0.75rem' }}>
-        <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}></span>
-        <button
-          onClick={() => {
-            setSpaceName('');
-            setShowSpaceModal(true);
-          }}
-          style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '2px' }}
-          className="hover:text-purple-600 flex items-center"
-          title="Create Space"
-        >
-          <Plus size={14} />
-        </button>
-      </div>
-
-      {/* Spaces list */}
-      <div className="flex-1 space-y-1">
-        {spaces.map(space => {
-          const isActive = space.id === activeSpaceId;
-          return (
-            <div key={space.id} style={{ position: 'relative' }}>
-              <div
-                onClick={() => setActiveSpaceId(space.id)}
-                className={`planner-space-item ${isActive ? 'planner-space-item--active' : ''}`}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-              >
-                <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-                  <span className="planner-space-icon" style={{ backgroundColor: space.color }}>
-                    {space.name.charAt(0)}
-                  </span>
-                  <span className="truncate max-w-[110px]" title={space.name}>{space.name}</span>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveMenuSpaceId(activeMenuSpaceId === space.id ? null : space.id);
-                  }}
-                  className={`planner-space-menu-btn ${activeMenuSpaceId === space.id ? 'planner-space-menu-btn--open' : ''}`}
-                  title="Space Settings"
-                >
-                  <MoreHorizontal size={12} />
-                </button>
-              </div>
-
-              {/* Space Dropdown Settings Menu */}
-              {activeMenuSpaceId === space.id && (
-                <div
-                  className="planner-space-dropdown"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    onClick={() => {
-                      handleRenameSpace(space.id, space.name);
-                      setActiveMenuSpaceId(null);
-                    }}
-                    className="planner-space-dropdown-item"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Pencil size={12} className="text-gray-400" />
-                      <span>Rename</span>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      handleCycleSpaceColor(space.id, space.color);
-                    }}
-                    className="planner-space-dropdown-item"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: space.color, display: 'inline-block' }} />
-                      <span>Color & Icon</span>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(window.location.href);
-                      alert("Link copied to clipboard!");
-                      setActiveMenuSpaceId(null);
-                    }}
-                    className="planner-space-dropdown-item"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Link size={12} className="text-gray-400" />
-                      <span>Copy link</span>
-                    </div>
-                  </button>
-
-                  <div className="planner-space-dropdown-divider" />
-
-                  <div className="planner-space-dropdown-header">Actions</div>
-
-                  <button
-                    onClick={() => {
-                      alert("Space duplicated (mock action).");
-                      setActiveMenuSpaceId(null);
-                    }}
-                    className="planner-space-dropdown-item"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Copy size={12} className="text-gray-400" />
-                      <span>Duplicate</span>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      alert("Space archived (mock action).");
-                      setActiveMenuSpaceId(null);
-                    }}
-                    className="planner-space-dropdown-item"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Archive size={12} className="text-gray-400" />
-                      <span>Archive</span>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={(e) => {
-                      handleDeleteSpace(space.id, space.name, e);
-                      setActiveMenuSpaceId(null);
-                    }}
-                    className="planner-space-dropdown-item planner-space-dropdown-item--danger"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Trash2 size={12} />
-                      <span>Delete</span>
-                    </div>
-                  </button>
-                </div>
-              )}
-
-              {/* Under active space, show children */}
-              {isActive && (
-                <div className="pl-6 pr-2 py-1 space-y-1 border-l border-gray-200 ml-4 mt-0.5 mb-1.5 text-[11px] text-gray-500 font-semibold">
-                  <div
-                    onClick={() => setActiveTab('list')}
-                    className={`flex items-center gap-1.5 py-1 px-2 rounded-sm cursor-pointer ${activeTab === 'list' ? 'bg-purple-50 text-purple-600' : 'hover:bg-gray-100 hover:text-gray-800'}`}
-                  >
-                    <ListIcon size={11} /> List
-                  </div>
-                  <div
-                    onClick={() => setActiveTab('board')}
-                    className={`flex items-center gap-1.5 py-1 px-2 rounded-sm cursor-pointer ${activeTab === 'board' ? 'bg-purple-50 text-purple-600' : 'hover:bg-gray-100 hover:text-gray-800'}`}
-                  >
-                    <FolderKanban size={11} /> Board
-                  </div>
-                  <div
-                    onClick={() => setActiveTab('calendar')}
-                    className={`flex items-center gap-1.5 py-1 px-2 rounded-sm cursor-pointer ${activeTab === 'calendar' ? 'bg-purple-50 text-purple-600' : 'hover:bg-gray-100 hover:text-gray-800'}`}
-                  >
-                    <CalendarIcon size={11} /> Calendar
-                  </div>
-                  <div
-                    onClick={() => setActiveTab('chat')}
-                    className={`flex items-center gap-1.5 py-1 px-2 rounded-sm cursor-pointer ${activeTab === 'chat' ? 'bg-purple-50 text-purple-600' : 'hover:bg-gray-100 hover:text-gray-800'}`}
-                  >
-                    <MessageSquare size={11} /> Chat
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Plus button at bottom of sidebar list */}
+      {/* Customize Sidebar button at the bottom */}
       <button
-        onClick={() => {
-          setSpaceName('');
-          setShowSpaceModal(true);
+        onClick={() => alert("Sidebar customization panel is coming soon!")}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '6px',
+          width: '100%',
+          backgroundColor: '#f1f5f9',
+          border: 'none',
+          borderRadius: '8px',
+          padding: '8px 12px',
+          fontSize: '11px',
+          fontWeight: 600,
+          color: '#475569',
+          cursor: 'pointer',
+          marginTop: 'auto',
+          transition: 'background-color 0.15s',
+          flexShrink: 0
         }}
-        className="w-full mt-4 py-2 hover:bg-gray-200/50 text-gray-400 hover:text-gray-700 rounded-lg text-[10px] font-bold transition-colors border border-dashed border-gray-300 flex items-center justify-center gap-1 cursor-pointer"
+        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#e2e8f0'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; }}
       >
-        <Plus size={12} />
-        New Space
+        <Sliders size={12} style={{ color: '#64748b' }} />
+        <span>Customize Sidebar</span>
       </button>
     </div>
   );
