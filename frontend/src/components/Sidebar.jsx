@@ -13,15 +13,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar, lightSidebarOpen =
 
   return (
     <aside className="dash-sidebar">
-      {/* Logo Area */}
-      <div className="dash-sidebar-logo">
-        <div className="dash-sidebar-icon">
-          <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
-            <path d="M4 20L10 14L14 18L20 10L24 14" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <circle cx="14" cy="14" r="12" stroke="white" strokeWidth="2" opacity="0.3"/>
-          </svg>
-        </div>
-      </div>
+
 
       {/* Nav Links */}
       <nav className="dash-nav-links">
