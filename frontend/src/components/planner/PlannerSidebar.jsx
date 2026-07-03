@@ -64,8 +64,10 @@ export default function PlannerSidebar({
             className={`planner-space-item ${activeSpaceId === 'home' ? 'planner-space-item--active' : ''}`}
             style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
           >
-            <Inbox size={14} style={{ color: '#64748b' }} />
-            <span style={{ fontWeight: 600 }}>Inbox</span>
+            <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+              <Inbox size={14} style={{ color: '#64748b' }} />
+              <span style={{ fontWeight: 600 }}>Inbox</span>
+            </div>
           </div>
 
           <div
@@ -73,8 +75,10 @@ export default function PlannerSidebar({
             style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
             onClick={() => alert("Assigned Comments is coming soon! (mock action)")}
           >
-            <MessageSquare size={14} style={{ color: '#64748b' }} />
-            <span style={{ fontWeight: 600 }}>Assigned Comments</span>
+            <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+              <MessageSquare size={14} style={{ color: '#64748b' }} />
+              <span style={{ fontWeight: 600 }}>Assigned Comments</span>
+            </div>
           </div>
 
           {/* My Tasks collapsible group */}
@@ -83,8 +87,10 @@ export default function PlannerSidebar({
               className="planner-space-item"
               style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
             >
-              <CheckSquare size={14} style={{ color: '#64748b' }} />
-              <span style={{ fontWeight: 600 }}>My Tasks</span>
+              <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+                <CheckSquare size={14} style={{ color: '#64748b' }} />
+                <span style={{ fontWeight: 600 }}>My Tasks</span>
+              </div>
             </div>
             
             {/* Sub-items (indented) */}
@@ -94,24 +100,30 @@ export default function PlannerSidebar({
                 style={{ display: 'flex', padding: '5px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}
                 onClick={() => alert("Tasks assigned to me (mock action)")}
               >
-                <span style={{ width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#7c3aed', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', fontWeight: 'bold' }}>J</span>
-                <span>Assigned to me</span>
+                <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px' }}>
+                  <span style={{ width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#7c3aed', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', fontWeight: 'bold' }}>J</span>
+                  <span>Assigned to me</span>
+                </div>
               </div>
               <div
                 className="planner-space-item"
                 style={{ display: 'flex', padding: '5px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}
                 onClick={() => alert("Today & Overdue tasks (mock action)")}
               >
-                <CalendarIcon size={12} style={{ color: '#94a3b8' }} />
-                <span>Today &amp; Overdue</span>
+                <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px' }}>
+                  <CalendarIcon size={12} style={{ color: '#94a3b8' }} />
+                  <span>Today &amp; Overdue</span>
+                </div>
               </div>
               <div
                 className="planner-space-item"
                 style={{ display: 'flex', padding: '5px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}
                 onClick={() => alert("Personal list (mock action)")}
               >
-                <ListIcon size={12} style={{ color: '#94a3b8' }} />
-                <span>Personal List</span>
+                <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px' }}>
+                  <ListIcon size={12} style={{ color: '#94a3b8' }} />
+                  <span>Personal List</span>
+                </div>
               </div>
             </div>
           </div>
@@ -121,8 +133,10 @@ export default function PlannerSidebar({
             style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
             onClick={() => alert("More tools (mock action)")}
           >
-            <MoreHorizontal size={14} style={{ color: '#64748b' }} />
-            <span style={{ fontWeight: 600 }}>More</span>
+            <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+              <MoreHorizontal size={14} style={{ color: '#64748b' }} />
+              <span style={{ fontWeight: 600 }}>More</span>
+            </div>
           </div>
         </div>
 
@@ -136,8 +150,10 @@ export default function PlannerSidebar({
             style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748b' }}
             onClick={() => alert("AI assistant ready to Ask, Build, Create!")}
           >
-            <Plus size={14} style={{ color: '#a855f7' }} />
-            <span style={{ color: '#6366f1', fontWeight: 600 }}>Ask, Build, Create</span>
+            <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+              <Plus size={14} style={{ color: '#a855f7' }} />
+              <span style={{ color: '#6366f1', fontWeight: 600 }}>Ask, Build, Create</span>
+            </div>
           </div>
         </div>
 
@@ -162,8 +178,10 @@ export default function PlannerSidebar({
               className={`planner-space-item ${activeSpaceId === 'home' ? 'planner-space-item--active' : ''}`}
               style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
             >
-              <LayoutGrid size={14} style={{ color: '#64748b' }} />
-              <span style={{ fontWeight: 600 }}>All Tasks <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 500 }}>- {workspaceName}</span></span>
+              <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+                <LayoutGrid size={14} style={{ color: '#64748b' }} />
+                <span style={{ fontWeight: 600 }}>All Tasks <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 500 }}>- {workspaceName}</span></span>
+              </div>
             </div>
 
             {/* Spaces list */}
