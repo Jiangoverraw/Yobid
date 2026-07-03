@@ -1388,9 +1388,10 @@ body {
   display: flex;
   flex-direction: column;
   padding: 1.5rem 1rem;
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  margin: 66px 0 10px 10px !important;
+  border-radius: 12px !important;
+  height: calc(100vh - 76px) !important;
+  position: relative !important;
   overflow: visible;
 }
 
@@ -1497,6 +1498,7 @@ body {
   flex-direction: column;
   min-width: 0;
   height: 100vh;
+  padding-top: 56px;
   overflow: hidden;
 }
 
@@ -1508,9 +1510,12 @@ body {
   padding: 0.5rem 1.5rem;
   background: #fff;
   border-bottom: 1.5px solid #e5e7eb;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 20;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 1000;
 }
 
 .dash-ws-pill {
