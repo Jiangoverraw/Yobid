@@ -3036,8 +3036,8 @@ body {
   padding: 1.5rem 1.25rem !important;
   flex-shrink: 0;
   text-align: left;
-  height: calc(100vh - 52px) !important;
-  margin: 6px 0 6px 8px !important;
+  height: calc(100vh - 58px) !important;
+  margin: 12px 0 6px 8px !important;
   border-radius: 8px !important;
   border: 1.5px solid #e5e7eb !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -3056,7 +3056,7 @@ body {
   opacity: 0 !important;
   overflow: hidden !important;
   border: none !important;
-  margin: 6px 0 6px 0 !important;
+  margin: 12px 0 6px 0 !important;
 }
 
 .planner-sidebar-title {
