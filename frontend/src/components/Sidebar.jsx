@@ -25,7 +25,6 @@ export default function Sidebar({ sidebarOpen, toggleSidebar, lightSidebarOpen =
           title="Expand Sidebar"
         >
           <ChevronsRight size={20} />
-          <span style={{ color: '#fff' }}>Expand</span>
         </button>
 
         <button
