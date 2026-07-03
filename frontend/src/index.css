@@ -1388,9 +1388,9 @@ body {
   display: flex;
   flex-direction: column;
   padding: 1.5rem 1rem;
-  margin: 56px 0 8px 8px !important;
-  border-radius: 10px !important;
-  height: calc(100vh - 64px) !important;
+  margin: 46px 0 6px 6px !important;
+  border-radius: 8px !important;
+  height: calc(100vh - 52px) !important;
   position: relative !important;
   overflow: visible;
 }
@@ -1498,7 +1498,7 @@ body {
   flex-direction: column;
   min-width: 0;
   height: 100vh;
-  padding-top: 48px;
+  padding-top: 40px;
   overflow: hidden;
 }
 
@@ -1507,14 +1507,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 1.5rem;
+  padding: 2px 1.25rem;
   background: #fff;
   border-bottom: 1.5px solid #e5e7eb;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 48px;
+  height: 40px;
   z-index: 1000;
 }
 
@@ -1857,8 +1857,8 @@ body {
 
 /* ─── Collapsible Sidebar States (Fixed ClickUp Style) ─── */
 .dash-sidebar {
-  width: 64px !important;
-  padding: 1rem 0.25rem !important;
+  width: 56px !important;
+  padding: 0.75rem 0.15rem !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -1867,8 +1867,8 @@ body {
 
 .dash-sidebar--open,
 .dash-sidebar--closed {
-  width: 64px !important;
-  padding: 1rem 0.25rem !important;
+  width: 56px !important;
+  padding: 0.75rem 0.15rem !important;
 }
 
 .dash-sidebar-logo {
@@ -1883,7 +1883,7 @@ body {
   align-items: center !important;
   justify-content: center !important;
   gap: 4px !important;
-  padding: 0.6rem 0.25rem !important;
+  padding: 0.4rem 0.15rem !important;
   border-radius: 8px !important;
   width: 100% !important;
   text-align: center !important;
@@ -1895,15 +1895,15 @@ body {
 
 .dash-nav-item span {
   display: block !important;
-  font-size: 10px !important;
+  font-size: 8px !important;
   font-weight: 600 !important;
   color: rgba(233, 213, 255, 0.75) !important;
   text-transform: capitalize !important;
 }
 
 .dash-nav-item svg {
-  width: 20px !important;
-  height: 20px !important;
+  width: 18px !important;
+  height: 18px !important;
 }
 
 .dash-nav-item:hover {
