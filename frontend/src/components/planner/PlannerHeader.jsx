@@ -9,8 +9,8 @@ export default function PlannerHeader({
   tabDisplayLabel,
   openNewTaskModal
 }) {
-  if (activeSpaceId === 'home') {
-    return null; // Hide the Workspace Home header row completely!
+  if (activeSpaceId === 'home' || activeSpaceId === 'my-tasks') {
+    return null; // Hide the Workspace Home and My Tasks header row completely!
   }
 
   return (

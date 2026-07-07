@@ -34,6 +34,7 @@ function PublicRoute({ children }) {
 }
 
 function App() {
+  console.log("[App] Rendering. Pathname:", window.location.pathname);
   return (
     <Router>
       <div className="app-container">

@@ -24,6 +24,7 @@ const HOURS = Array.from({ length: 24 }, (_, i) => {
 });
 
 export default function PlannerPage() {
+  console.log("[PlannerPage] Mounted/Rendered!");
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);

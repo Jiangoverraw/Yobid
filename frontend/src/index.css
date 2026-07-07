@@ -1951,6 +1951,8 @@ body {
 /* ─── Expand Button Animating Collapse/Expand in Flex ─── */
 .dash-nav-item--expand-btn {
   height: 0 !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   margin-top: 0 !important;
@@ -1966,7 +1968,9 @@ body {
 
 .dash-nav-item--expand-btn-active {
   height: 30px !important;
+  min-height: 30px !important;
   width: 30px !important;
+  min-width: 30px !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   margin-bottom: 0.75rem !important;
@@ -3061,8 +3065,8 @@ body {
   padding: 1.5rem 1.25rem !important;
   flex-shrink: 0;
   text-align: left;
-  height: calc(100vh - 58px) !important;
-  margin: 12px 0 6px 8px !important;
+  height: calc(100vh - 52px) !important;
+  margin: 6px 0 6px 8px !important;
   border-radius: 8px !important;
   border: 1.5px solid #e5e7eb !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -3239,3 +3243,13 @@ body {
 * {
   scrollbar-width: none !important;
 }
+
+/* Collapsible My Tasks Subitems Animation */
+.planner-my-tasks-subitems {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-in-out;
+}

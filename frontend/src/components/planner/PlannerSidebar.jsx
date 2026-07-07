@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Plus, MoreHorizontal, Pencil, Link, Copy, Archive, Trash2, List as ListIcon, FolderKanban, Calendar as CalendarIcon, MessageSquare, ChevronsLeft, Search, Inbox, CheckSquare, Sliders } from 'lucide-react';
+import { LayoutGrid, Plus, MoreHorizontal, Pencil, Link, Copy, Archive, Trash2, List as ListIcon, FolderKanban, Calendar as CalendarIcon, MessageSquare, ChevronsLeft, Search, Inbox, CheckSquare, Sliders, ChevronDown, ChevronRight } from 'lucide-react';
 import SpaceDropdownMenu from './SpaceDropdownMenu';
 
 export default function PlannerSidebar({
@@ -23,6 +23,8 @@ export default function PlannerSidebar({
   onMouseDownResizer
 }) {
   const [menuPosition, setMenuPosition] = React.useState({ top: 0, left: 0 });
+  const [isMyTasksHovered, setIsMyTasksHovered] = React.useState(false);
+  const [isMyTasksExpanded, setIsMyTasksExpanded] = React.useState(true);
 
   return (
     <div
@@ -86,17 +88,46 @@ export default function PlannerSidebar({
           {/* My Tasks collapsible group */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div
-              className="planner-space-item"
-              style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569' }}
+              className={`planner-space-item ${activeSpaceId === 'my-tasks' ? 'planner-space-item--active' : ''}`}
+              style={{ display: 'flex', padding: '6px 8px', borderRadius: '6px', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#475569', cursor: 'pointer' }}
+              onMouseEnter={() => setIsMyTasksHovered(true)}
+              onMouseLeave={() => setIsMyTasksHovered(false)}
+              onClick={() => setActiveSpaceId('my-tasks')}
             >
-              <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
-                <CheckSquare size={14} style={{ color: '#64748b' }} />
+              <div className="planner-space-link-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', width: '100%' }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', width: '14px', height: '14px', justifyContent: 'center', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMyTasksExpanded(!isMyTasksExpanded);
+                  }}
+                >
+                  {isMyTasksHovered ? (
+                    <ChevronRight
+                      size={14}
+                      style={{
+                        color: '#64748b',
+                        transform: isMyTasksExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                      }}
+                    />
+                  ) : (
+                    <CheckSquare size={14} style={{ color: '#64748b' }} />
+                  )}
+                </div>
                 <span style={{ fontWeight: 600 }}>My Tasks</span>
               </div>
             </div>
             
-            {/* Sub-items (indented) */}
-            <div style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            {/* Sub-items (indented) with smooth height and opacity transition */}
+            <div
+              className="planner-my-tasks-subitems"
+              style={{
+                maxHeight: isMyTasksExpanded ? '120px' : '0px',
+                opacity: isMyTasksExpanded ? 1 : 0,
+                pointerEvents: isMyTasksExpanded ? 'auto' : 'none',
+              }}
+            >
               <div
                 className="planner-space-item"
                 style={{ display: 'flex', padding: '5px 8px', borderRadius: '6px', cursor: 'pointer', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}

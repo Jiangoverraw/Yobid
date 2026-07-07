@@ -6,6 +6,7 @@ import { usePlannerBoard } from '../hooks/usePlannerBoard';
 import PlannerSidebar from './planner/PlannerSidebar';
 import PlannerHeader from './planner/PlannerHeader';
 import WorkspaceHomeView from './planner/WorkspaceHomeView';
+import MyTasksDashboardView from './planner/MyTasksDashboardView';
 import ChatView from './planner/ChatView';
 import ListView from './planner/ListView';
 import BoardView from './planner/BoardView';
@@ -38,8 +39,8 @@ export default function PlannerBoard(props) {
   // Capitalize Tab names for display
   const tabDisplayLabel = board.activeTab.charAt(0).toUpperCase() + board.activeTab.slice(1);
 
-  // Sidebar width state and drag event handler
-  const [sidebarWidth, setSidebarWidth] = React.useState(() => Number(localStorage.getItem('yobid_planner_sidebar_width') ?? 240));
+  // Sidebar width state from props
+  const { sidebarWidth, setSidebarWidth } = props;
 
   const handleMouseDownResizer = (e) => {
     e.preventDefault();
@@ -70,7 +71,9 @@ export default function PlannerBoard(props) {
 
   const activeSpace = board.activeSpaceId === 'home'
     ? { name: 'Workspace Home', color: '#7c3aed' }
-    : (board.spaces.find(s => s.id === board.activeSpaceId) || { name: 'Workspace', color: '#7c3aed' });
+    : board.activeSpaceId === 'my-tasks'
+      ? { name: 'My Tasks', color: '#7c3aed' }
+      : (board.spaces.find(s => s.id === board.activeSpaceId) || { name: 'Workspace', color: '#7c3aed' });
 
   return (
     <div className="planner-layout">
@@ -121,7 +124,20 @@ export default function PlannerBoard(props) {
             />
           )}
 
-          {board.activeSpaceId !== 'home' && board.activeTab === 'chat' && (
+          {board.activeSpaceId === 'my-tasks' && (
+            <MyTasksDashboardView
+              greeting={greeting}
+              userDisplayName={userDisplayName}
+              tasks={board.tasks}
+              spaces={board.spaces}
+              setActiveSpaceId={board.setActiveSpaceId}
+              openNewTaskModal={board.openNewTaskModal}
+              handleUpdateTaskStatus={board.handleUpdateTaskStatus}
+              handleDeleteTask={board.handleDeleteTask}
+            />
+          )}
+
+          {board.activeSpaceId !== 'home' && board.activeSpaceId !== 'my-tasks' && board.activeTab === 'chat' && (
             <ChatView
               activeSpace={activeSpace}
               chatMessages={board.chatMessages}
@@ -132,7 +148,7 @@ export default function PlannerBoard(props) {
             />
           )}
 
-          {board.activeSpaceId !== 'home' && board.activeTab === 'list' && (
+          {board.activeSpaceId !== 'home' && board.activeSpaceId !== 'my-tasks' && board.activeTab === 'list' && (
             <ListView
               filteredTasks={filteredTasks}
               epics={board.epics}
@@ -144,7 +160,7 @@ export default function PlannerBoard(props) {
             />
           )}
 
-          {board.activeSpaceId !== 'home' && board.activeTab === 'board' && (
+          {board.activeSpaceId !== 'home' && board.activeSpaceId !== 'my-tasks' && board.activeTab === 'board' && (
             <BoardView
               filteredTasks={filteredTasks}
               epics={board.epics}
@@ -154,7 +170,7 @@ export default function PlannerBoard(props) {
             />
           )}
 
-          {board.activeSpaceId !== 'home' && board.activeTab === 'calendar' && (
+          {board.activeSpaceId !== 'home' && board.activeSpaceId !== 'my-tasks' && board.activeTab === 'calendar' && (
             <CalendarView
               currentDate={board.currentDate}
               prevMonth={board.prevMonth}

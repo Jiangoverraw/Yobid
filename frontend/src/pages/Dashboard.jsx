@@ -50,11 +50,13 @@ const renderAvatar = (targetUser, className = 'dash-avatar') => {
 };
 
 export default function Dashboard() {
+  console.log("[Dashboard] Mounted/Rendered!");
   const { user, logout } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [activePath, setActivePath] = useState({ spaceName: 'Home', tabName: '' });
   const [workspaceInfo, setWorkspaceInfo] = useState({ name: '', onRename: null });
   const [lightSidebarOpen, setLightSidebarOpen] = useState(true);
+  const [sidebarWidth, setSidebarWidth] = useState(() => Number(localStorage.getItem('yobid_planner_sidebar_width') ?? 240));
 
   const handleStateChange = useCallback((spaceName, tabName) => {
     setActivePath(prev => {
@@ -142,19 +144,26 @@ export default function Dashboard() {
                 className="dash-ws-pill"
                 onClick={workspaceInfo.onRename}
                 title="Rename Workspace"
+                style={{
+                  width: 'auto',
+                  marginLeft: '6px',
+                  boxSizing: 'border-box',
+                  padding: '4px 8px',
+                }}
               >
                 <span style={{
                   width: '24px', height: '24px',
                   backgroundColor: '#7c3aed', color: 'white',
                   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  borderRadius: '6px', fontWeight: 'bold', fontSize: '11px', flexShrink: 0
+                  borderRadius: '6px', fontWeight: 'bold', fontSize: '11px', flexShrink: 0,
+                  marginRight: '8px'
                 }}>
                   {workspaceInfo.name.charAt(0).toUpperCase()}
                 </span>
-                <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '140px' }}>
+                <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#1e293b', marginRight: '6px' }}>
                   {workspaceInfo.name}
                 </span>
-                <ChevronDown size={14} style={{ color: '#64748b', marginLeft: '2px' }} />
+                <ChevronDown size={14} style={{ color: '#64748b' }} />
               </div>
             )}
           </div>
@@ -305,6 +314,8 @@ export default function Dashboard() {
             onWorkspaceInfo={setWorkspaceInfo}
             lightSidebarOpen={lightSidebarOpen}
             setLightSidebarOpen={setLightSidebarOpen}
+            sidebarWidth={sidebarWidth}
+            setSidebarWidth={setSidebarWidth}
           />
         </div>
       </div>
