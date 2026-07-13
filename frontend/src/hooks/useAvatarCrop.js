@@ -1,18 +1,18 @@
-import { useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { useAvatarCropStore } from './useAvatarCropStore';
 
 /**
- * Custom hook to manage avatar upload, crop, zoom and pan logic.
+ * Custom hook to manage avatar upload, crop, zoom and pan logic using Zustand.
  */
 export function useAvatarCrop(initialAvatar = '') {
-  const [avatarVal, setAvatarVal] = useState(initialAvatar);
-  const [showCropModal, setShowCropModal] = useState(false);
-  const [cropImageSrc, setCropImageSrc] = useState('');
-  const [zoom, setZoom] = useState(1);
-  const [panX, setPanX] = useState(0);
-  const [panY, setPanY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const store = useAvatarCropStore();
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (initialAvatar && !store.avatarVal) {
+      store.setAvatarVal(initialAvatar);
+    }
+  }, [initialAvatar]);
 
   const handleAvatarFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -23,27 +23,23 @@ export function useAvatarCrop(initialAvatar = '') {
     }
     const reader = new FileReader();
     reader.onloadend = () => {
-      setCropImageSrc(reader.result);
-      setZoom(1.0);
-      setPanX(0);
-      setPanY(0);
-      setShowCropModal(true);
+      store.resetCropState(reader.result);
     };
     reader.readAsDataURL(file);
   };
 
   const handleDragStart = (clientX, clientY) => {
-    setIsDragging(true);
-    setDragStart({ x: clientX - panX, y: clientY - panY });
+    store.setIsDragging(true);
+    store.setDragStart({ x: clientX - store.panX, y: clientY - store.panY });
   };
 
   const handleDragMove = (clientX, clientY) => {
-    if (!isDragging) return;
-    setPanX(clientX - dragStart.x);
-    setPanY(clientY - dragStart.y);
+    if (!store.isDragging) return;
+    store.setPanX(clientX - store.dragStart.x);
+    store.setPanY(clientY - store.dragStart.y);
   };
 
-  const handleDragEnd = () => setIsDragging(false);
+  const handleDragEnd = () => store.setIsDragging(false);
 
   const handleMouseDown = (e) => { e.preventDefault(); handleDragStart(e.clientX, e.clientY); };
   const handleMouseMove = (e) => handleDragMove(e.clientX, e.clientY);
@@ -59,7 +55,7 @@ export function useAvatarCrop(initialAvatar = '') {
 
   const handleApplyCrop = () => {
     const img = new Image();
-    img.src = cropImageSrc;
+    img.src = store.cropImageSrc;
     img.onload = () => {
       const canvas = document.createElement('canvas');
       canvas.width = 160;
@@ -81,23 +77,28 @@ export function useAvatarCrop(initialAvatar = '') {
       const cy = (160 - dh) / 2;
 
       ctx.translate(160 / 2, 160 / 2);
-      ctx.translate(panX, panY);
-      ctx.scale(zoom, zoom);
+      ctx.translate(store.panX, store.panY);
+      ctx.scale(store.zoom, store.zoom);
       ctx.translate(-160 / 2, -160 / 2);
       ctx.drawImage(img, cx, cy, dw, dh);
 
       const croppedBase64 = canvas.toDataURL('image/jpeg', 0.95);
-      setAvatarVal(croppedBase64);
-      setShowCropModal(false);
+      store.setAvatarVal(croppedBase64);
+      store.setShowCropModal(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
   };
 
   return {
-    avatarVal, setAvatarVal,
-    showCropModal, setShowCropModal,
-    cropImageSrc, zoom, setZoom,
-    panX, panY,
+    avatarVal: store.avatarVal,
+    setAvatarVal: store.setAvatarVal,
+    showCropModal: store.showCropModal,
+    setShowCropModal: store.setShowCropModal,
+    cropImageSrc: store.cropImageSrc,
+    zoom: store.zoom,
+    setZoom: store.setZoom,
+    panX: store.panX,
+    panY: store.panY,
     fileInputRef,
     handleAvatarFileChange,
     handleMouseDown, handleMouseMove, handleMouseUp,

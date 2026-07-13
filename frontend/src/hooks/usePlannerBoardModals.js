@@ -1,76 +1,44 @@
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { workspacesApi, projectsApi, tasksApi } from '../services/api';
+import { usePlannerModalsStore } from './usePlannerModalsStore';
+
+const getTodayStr = () => new Date().toISOString().split('T')[0];
 
 export function usePlannerBoardModals(data, epics, setEpics, sprints, setSprints) {
-  // Modals visibility
-  const [showDeleteSpaceModal, setShowDeleteSpaceModal] = useState(false);
-  const [spaceToDelete, setSpaceToDelete] = useState(null);
-  const [showRenameSpaceModal, setShowRenameSpaceModal] = useState(false);
-  const [spaceToRename, setSpaceToRename] = useState(null);
-  const [tempSpaceName, setTempSpaceName] = useState('');
-  const [showRenameWorkspaceModal, setShowRenameWorkspaceModal] = useState(false);
-  const [tempWorkspaceName, setTempWorkspaceName] = useState('');
-  const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState(null);
+  const store = usePlannerModalsStore();
 
-  const [showTaskModal, setShowTaskModal] = useState(false);
-  const [showEpicModal, setShowEpicModal] = useState(false);
-  const [showSprintModal, setShowSprintModal] = useState(false);
-  const [showSpaceModal, setShowSpaceModal] = useState(false);
-
-  // Form Fields
-  const [taskTitle, setTaskTitle] = useState('');
-  const [taskDesc, setTaskDesc] = useState('');
-  const [taskPriority, setTaskPriority] = useState('MEDIUM');
-  const [taskStatus, setTaskStatus] = useState('TODO');
-  const [taskEpic, setTaskEpic] = useState('');
-  const [taskSprint, setTaskSprint] = useState('');
-  const [taskDeadline, setTaskDeadline] = useState('2026-06-23');
-
-  const [epicName, setEpicName] = useState('');
-  const [epicDesc, setEpicDesc] = useState('');
-  const [epicColor, setEpicColor] = useState('#7c3aed');
-
-  const [sprintName, setSprintName] = useState('');
-  const [sprintStart, setSprintStart] = useState('2026-06-23');
-  const [sprintEnd, setSprintEnd] = useState('2026-06-30');
-  const [sprintStatus, setSprintStatus] = useState('planned');
-
-  const [spaceName, setSpaceName] = useState('');
-  const [spaceColor, setSpaceColor] = useState('#7c3aed');
-
-  const handleRenameWorkspace = () => {
-    setTempWorkspaceName(data.workspaceName);
-    setShowRenameWorkspaceModal(true);
-  };
+  const handleRenameWorkspace = useCallback(() => {
+    store.setTempWorkspaceName(data.workspaceName);
+    store.setShowRenameWorkspaceModal(true);
+  }, [data.workspaceName, store]);
 
   const confirmRenameWorkspace = async (e) => {
     e.preventDefault();
-    if (!tempWorkspaceName.trim() || !data.activeWorkspaceId) return;
+    if (!store.tempWorkspaceName.trim() || !data.activeWorkspaceId) return;
     try {
-      await workspacesApi.update(data.activeWorkspaceId, { name: tempWorkspaceName.trim() });
-      data.setWorkspaceName(tempWorkspaceName.trim());
-      data.setWorkspaces(data.workspaces.map(w => w.id === data.activeWorkspaceId ? { ...w, name: tempWorkspaceName.trim() } : w));
-      setShowRenameWorkspaceModal(false);
+      await workspacesApi.update(data.activeWorkspaceId, { name: store.tempWorkspaceName.trim() });
+      data.setWorkspaceName(store.tempWorkspaceName.trim());
+      data.setWorkspaces(data.workspaces.map(w => w.id === data.activeWorkspaceId ? { ...w, name: store.tempWorkspaceName.trim() } : w));
+      store.setShowRenameWorkspaceModal(false);
     } catch (err) {
       alert(`Error renaming workspace: ${err.message}`);
     }
   };
 
-  const openNewTaskModal = (presetDate = '2026-06-23', presetStatus = 'TODO') => {
-    setTaskDeadline(presetDate);
-    setTaskStatus(presetStatus);
-    setTaskTitle('');
-    setTaskDesc('');
-    setTaskPriority('MEDIUM');
-    setTaskEpic(epics[0]?.id || '');
-    setTaskSprint(sprints[0]?.id || '');
-    setShowTaskModal(true);
+  const openNewTaskModal = (presetDate = getTodayStr(), presetStatus = 'TODO') => {
+    store.setTaskDeadline(presetDate);
+    store.setTaskStatus(presetStatus);
+    store.setTaskTitle('');
+    store.setTaskDesc('');
+    store.setTaskPriority('MEDIUM');
+    store.setTaskEpic(epics[0]?.id || '');
+    store.setTaskSprint(sprints[0]?.id || '');
+    store.setShowTaskModal(true);
   };
 
   const handleCreateTask = async (e) => {
     e.preventDefault();
-    if (!taskTitle.trim()) return;
+    if (!store.taskTitle.trim()) return;
 
     const targetProjectId = data.activeSpaceId === 'home' ? (data.spaces[0]?.id) : data.activeSpaceId;
     if (!targetProjectId) {
@@ -80,12 +48,12 @@ export function usePlannerBoardModals(data, epics, setEpics, sprints, setSprints
 
     try {
       const createdTask = await tasksApi.create({
-        title: taskTitle.trim(),
-        description: taskDesc.trim() || undefined,
-        priority: taskPriority,
-        status: taskStatus,
+        title: store.taskTitle.trim(),
+        description: store.taskDesc.trim() || undefined,
+        priority: store.taskPriority,
+        status: store.taskStatus,
         projectId: Number(targetProjectId),
-        deadline: taskDeadline ? new Date(taskDeadline).toISOString() : undefined,
+        deadline: store.taskDeadline ? new Date(store.taskDeadline).toISOString() : undefined,
       });
 
       const newTask = {
@@ -94,9 +62,9 @@ export function usePlannerBoardModals(data, epics, setEpics, sprints, setSprints
       };
 
       data.setTasks([...data.tasks, newTask]);
-      setShowTaskModal(false);
-      setTaskTitle('');
-      setTaskDesc('');
+      store.setShowTaskModal(false);
+      store.setTaskTitle('');
+      store.setTaskDesc('');
     } catch (err) {
       alert(`Error creating task: ${err.message}`);
     }
@@ -104,45 +72,45 @@ export function usePlannerBoardModals(data, epics, setEpics, sprints, setSprints
 
   const handleCreateEpic = (e) => {
     e.preventDefault();
-    if (!epicName.trim()) return;
+    if (!store.epicName.trim()) return;
 
     const newEpic = {
       id: `epic-${Date.now()}`,
-      name: epicName,
-      description: epicDesc,
-      color: epicColor
+      name: store.epicName,
+      description: store.epicDesc,
+      color: store.epicColor
     };
 
     setEpics([...epics, newEpic]);
-    setShowEpicModal(false);
-    setEpicName('');
-    setEpicDesc('');
+    store.setShowEpicModal(false);
+    store.setEpicName('');
+    store.setEpicDesc('');
   };
 
   const handleCreateSprint = (e) => {
     e.preventDefault();
-    if (!sprintName.trim()) return;
+    if (!store.sprintName.trim()) return;
 
     const newSprint = {
       id: `sprint-${Date.now()}`,
-      name: sprintName,
-      startDate: sprintStart,
-      endDate: sprintEnd,
-      status: sprintStatus
+      name: store.sprintName,
+      startDate: store.sprintStart,
+      endDate: store.sprintEnd,
+      status: store.sprintStatus
     };
 
     setSprints([...sprints, newSprint]);
-    setShowSprintModal(false);
-    setSprintName('');
+    store.setShowSprintModal(false);
+    store.setSprintName('');
   };
 
   const handleCreateSpace = async (e) => {
     e.preventDefault();
-    if (!spaceName.trim() || !data.activeWorkspaceId) return;
+    if (!store.spaceName.trim() || !data.activeWorkspaceId) return;
 
     try {
       const newProj = await projectsApi.create({
-        name: spaceName.trim(),
+        name: store.spaceName.trim(),
         workspaceId: data.activeWorkspaceId
       });
       const colors = ['#7c3aed', '#ff6b6b', '#10b981', '#3b82f6', '#f59e0b', '#ec4899'];
@@ -156,8 +124,8 @@ export function usePlannerBoardModals(data, epics, setEpics, sprints, setSprints
       data.setSpaces([...data.spaces, newSpace]);
       data.setActiveSpaceId(newProj.id);
       localStorage.setItem('yobid_active_space', String(newProj.id));
-      setShowSpaceModal(false);
-      setSpaceName('');
+      store.setShowSpaceModal(false);
+      store.setSpaceName('');
     } catch (err) {
       alert(`Error creating space: ${err.message}`);
     }
@@ -167,14 +135,14 @@ export function usePlannerBoardModals(data, epics, setEpics, sprints, setSprints
     if (e) e.stopPropagation();
     const space = data.spaces.find(s => s.id === spaceId);
     if (space) {
-      setSpaceToDelete(space);
-      setShowDeleteSpaceModal(true);
+      store.setSpaceToDelete(space);
+      store.setShowDeleteSpaceModal(true);
     }
   };
 
   const confirmDeleteSpace = async () => {
-    if (!spaceToDelete) return;
-    const spaceId = spaceToDelete.id;
+    if (!store.spaceToDelete) return;
+    const spaceId = store.spaceToDelete.id;
     try {
       await projectsApi.remove(spaceId);
       data.setSpaces(data.spaces.filter(s => s.id !== spaceId));
@@ -183,8 +151,8 @@ export function usePlannerBoardModals(data, epics, setEpics, sprints, setSprints
         data.setActiveSpaceId('home');
         localStorage.setItem('yobid_active_space', 'home');
       }
-      setShowDeleteSpaceModal(false);
-      setSpaceToDelete(null);
+      store.setShowDeleteSpaceModal(false);
+      store.setSpaceToDelete(null);
     } catch (err) {
       alert(`Error deleting space: ${err.message}`);
     }
@@ -193,20 +161,20 @@ export function usePlannerBoardModals(data, epics, setEpics, sprints, setSprints
   const handleRenameSpace = (spaceId, currentName) => {
     const space = data.spaces.find(s => s.id === spaceId);
     if (space) {
-      setSpaceToRename(space);
-      setTempSpaceName(currentName);
-      setShowRenameSpaceModal(true);
+      store.setSpaceToRename(space);
+      store.setTempSpaceName(currentName);
+      store.setShowRenameSpaceModal(true);
     }
   };
 
   const confirmRenameSpace = async (e) => {
     e.preventDefault();
-    if (!spaceToRename || !tempSpaceName.trim()) return;
+    if (!store.spaceToRename || !store.tempSpaceName.trim()) return;
     try {
-      await projectsApi.update(spaceToRename.id, { name: tempSpaceName.trim() });
-      data.setSpaces(data.spaces.map(s => s.id === spaceToRename.id ? { ...s, name: tempSpaceName.trim() } : s));
-      setShowRenameSpaceModal(false);
-      setSpaceToRename(null);
+      await projectsApi.update(store.spaceToRename.id, { name: store.tempSpaceName.trim() });
+      data.setSpaces(data.spaces.map(s => s.id === store.spaceToRename.id ? { ...s, name: store.tempSpaceName.trim() } : s));
+      store.setShowRenameSpaceModal(false);
+      store.setSpaceToRename(null);
     } catch (err) {
       alert(`Error renaming space: ${err.message}`);
     }
@@ -215,53 +183,82 @@ export function usePlannerBoardModals(data, epics, setEpics, sprints, setSprints
   const handleDeleteTask = (taskId) => {
     const task = data.tasks.find(t => t.id === taskId);
     if (task) {
-      setTaskToDelete(task);
-      setShowDeleteTaskModal(true);
+      store.setTaskToDelete(task);
+      store.setShowDeleteTaskModal(true);
     }
   };
 
   const confirmDeleteTask = async () => {
-    if (!taskToDelete) return;
+    if (!store.taskToDelete) return;
     try {
-      await tasksApi.remove(taskToDelete.id);
-      data.setTasks(data.tasks.filter(t => t.id !== taskToDelete.id));
-      setShowDeleteTaskModal(false);
-      setTaskToDelete(null);
+      await tasksApi.remove(store.taskToDelete.id);
+      data.setTasks(data.tasks.filter(t => t.id !== store.taskToDelete.id));
+      store.setShowDeleteTaskModal(false);
+      store.setTaskToDelete(null);
     } catch (err) {
       alert(`Error deleting task: ${err.message}`);
     }
   };
 
   return {
-    showDeleteSpaceModal, setShowDeleteSpaceModal,
-    spaceToDelete, setSpaceToDelete,
-    showRenameSpaceModal, setShowRenameSpaceModal,
-    spaceToRename, setSpaceToRename,
-    tempSpaceName, setTempSpaceName,
-    showRenameWorkspaceModal, setShowRenameWorkspaceModal,
-    tempWorkspaceName, setTempWorkspaceName,
-    showDeleteTaskModal, setShowDeleteTaskModal,
-    taskToDelete, setTaskToDelete,
-    showTaskModal, setShowTaskModal,
-    showEpicModal, setShowEpicModal,
-    showSprintModal, setShowSprintModal,
-    showSpaceModal, setShowSpaceModal,
-    taskTitle, setTaskTitle,
-    taskDesc, setTaskDesc,
-    taskPriority, setTaskPriority,
-    taskStatus, setTaskStatus,
-    taskEpic, setTaskEpic,
-    taskSprint, setTaskSprint,
-    taskDeadline, setTaskDeadline,
-    epicName, setEpicName,
-    epicDesc, setEpicDesc,
-    epicColor, setEpicColor,
-    sprintName, setSprintName,
-    sprintStart, setSprintStart,
-    sprintEnd, setSprintEnd,
-    sprintStatus, setSprintStatus,
-    spaceName, setSpaceName,
-    spaceColor, setSpaceColor,
+    showDeleteSpaceModal: store.showDeleteSpaceModal,
+    setShowDeleteSpaceModal: store.setShowDeleteSpaceModal,
+    spaceToDelete: store.spaceToDelete,
+    setSpaceToDelete: store.setSpaceToDelete,
+    showRenameSpaceModal: store.showRenameSpaceModal,
+    setShowRenameSpaceModal: store.setShowRenameSpaceModal,
+    spaceToRename: store.spaceToRename,
+    setSpaceToRename: store.setSpaceToRename,
+    tempSpaceName: store.tempSpaceName,
+    setTempSpaceName: store.setTempSpaceName,
+    showRenameWorkspaceModal: store.showRenameWorkspaceModal,
+    setShowRenameWorkspaceModal: store.setShowRenameWorkspaceModal,
+    tempWorkspaceName: store.tempWorkspaceName,
+    setTempWorkspaceName: store.setTempWorkspaceName,
+    showDeleteTaskModal: store.showDeleteTaskModal,
+    setShowDeleteTaskModal: store.setShowDeleteTaskModal,
+    taskToDelete: store.taskToDelete,
+    setTaskToDelete: store.setTaskToDelete,
+    showTaskModal: store.showTaskModal,
+    setShowTaskModal: store.setShowTaskModal,
+    showEpicModal: store.showEpicModal,
+    setShowEpicModal: store.setShowEpicModal,
+    showSprintModal: store.showSprintModal,
+    setShowSprintModal: store.setShowSprintModal,
+    showSpaceModal: store.showSpaceModal,
+    setShowSpaceModal: store.setShowSpaceModal,
+    taskTitle: store.taskTitle,
+    setTaskTitle: store.setTaskTitle,
+    taskDesc: store.taskDesc,
+    setTaskDesc: store.setTaskDesc,
+    taskPriority: store.taskPriority,
+    setTaskPriority: store.setTaskPriority,
+    taskStatus: store.taskStatus,
+    setTaskStatus: store.setTaskStatus,
+    taskEpic: store.taskEpic,
+    setTaskEpic: store.setTaskEpic,
+    taskSprint: store.taskSprint,
+    setTaskSprint: store.setTaskSprint,
+    taskDeadline: store.taskDeadline,
+    setTaskDeadline: store.setTaskDeadline,
+    epicName: store.epicName,
+    setEpicName: store.setEpicName,
+    epicDesc: store.epicDesc,
+    setEpicDesc: store.setEpicDesc,
+    epicColor: store.epicColor,
+    setEpicColor: store.setEpicColor,
+    sprintName: store.sprintName,
+    setSprintName: store.setSprintName,
+    sprintStart: store.sprintStart,
+    setSprintStart: store.setSprintStart,
+    sprintEnd: store.sprintEnd,
+    setSprintEnd: store.setSprintEnd,
+    sprintStatus: store.sprintStatus,
+    setSprintStatus: store.setSprintStatus,
+    spaceName: store.spaceName,
+    setSpaceName: store.setSpaceName,
+    spaceColor: store.spaceColor,
+    setSpaceColor: store.setSpaceColor,
     handleRenameWorkspace, confirmRenameWorkspace,
     openNewTaskModal, handleCreateTask,
     handleCreateEpic, handleCreateSprint, handleCreateSpace,

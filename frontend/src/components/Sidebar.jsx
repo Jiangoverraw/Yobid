@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Calendar, Sparkles, Users, Settings, Shield, UserPlus, ArrowUpCircle, ChevronsRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export default function Sidebar({ sidebarOpen, toggleSidebar, lightSidebarOpen = true, onExpandLightSidebar }) {
+const Sidebar = function Sidebar({ sidebarOpen, toggleSidebar, lightSidebarOpen = true, onExpandLightSidebar }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -107,4 +107,6 @@ export default function Sidebar({ sidebarOpen, toggleSidebar, lightSidebarOpen =
       </div>
     </aside>
   );
-}
+};
+
+export default React.memo(Sidebar);

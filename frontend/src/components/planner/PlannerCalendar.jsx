@@ -1,18 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ChevronLeft, ChevronRight, ChevronDown, Sparkles,
   Calendar as CalendarIcon, RotateCw, Settings as SettingsIcon, Search
 } from 'lucide-react';
-
-const WEEK_DAYS = [
-  { name: 'Sun', date: '28' },
-  { name: 'Mon', date: '29' },
-  { name: 'Tue', date: '30' },
-  { name: 'Wed', date: '1' },
-  { name: 'Thu', date: '2' },
-  { name: 'Fri', date: '3', isToday: true },
-  { name: 'Sat', date: '4' }
-];
 
 const HOURS = Array.from({ length: 24 }, (_, i) => {
   const ampm = i >= 12 ? 'PM' : 'AM';
@@ -20,7 +10,62 @@ const HOURS = Array.from({ length: 24 }, (_, i) => {
   return `${displayHour} ${ampm}`;
 });
 
-export default function PlannerCalendar({ events, onCellClick }) {
+const PlannerCalendar = function PlannerCalendar({
+  events = [],
+  weekDays,
+  currentWeekStart,
+  onCellClick,
+  onPrevWeek,
+  onNextWeek,
+  onToday,
+  onDeleteEvent
+}) {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 30000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const displayDays = useMemo(() => {
+    if (weekDays && weekDays.length) return weekDays;
+    const today = new Date();
+    const day = today.getDay();
+    const start = new Date(today);
+    start.setDate(today.getDate() - day);
+    start.setHours(0, 0, 0, 0);
+    const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      return {
+        name: names[i],
+        date: d.getDate().toString(),
+        fullDate: d,
+        isToday: d.toDateString() === today.toDateString()
+      };
+    });
+  }, [weekDays]);
+
+  const displayMonthYear = useMemo(() => {
+    const d = currentWeekStart || now;
+    return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }, [currentWeekStart, now]);
+
+  const isNowInThisWeek = useMemo(() => {
+    const todayStr = now.toDateString();
+    return displayDays.some(d => d.fullDate?.toDateString() === todayStr || (d.isToday && !d.fullDate));
+  }, [displayDays, now]);
+
+  const timePercent = useMemo(() => {
+    const totalMinutes = now.getHours() * 60 + now.getMinutes();
+    return (totalMinutes / 1440) * 100;
+  }, [now]);
+
+  const timeFormatted = useMemo(() => {
+    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+  }, [now]);
+
   return (
     <main className="planner-calendar-area" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
       
@@ -28,10 +73,10 @@ export default function PlannerCalendar({ events, onCellClick }) {
       <div style={{ height: '48px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ display: 'flex', gap: '4px' }}>
-            <button style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}><ChevronLeft size={16} /></button>
-            <button style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}><ChevronRight size={16} /></button>
+            <button onClick={onPrevWeek} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }} title="Previous Week"><ChevronLeft size={16} /></button>
+            <button onClick={onNextWeek} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }} title="Next Week"><ChevronRight size={16} /></button>
           </div>
-          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1e293b' }}>June 2026</span>
+          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1e293b' }}>{displayMonthYear}</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: 'auto' }}>
@@ -45,9 +90,9 @@ export default function PlannerCalendar({ events, onCellClick }) {
 
           <div style={{ width: '1px', height: '16px', backgroundColor: '#cbd5e1' }} />
           
-          <button style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', position: 'relative' }}>
+          <button onClick={onToday} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', position: 'relative' }} title="Go to Today">
             <CalendarIcon size={16} />
-            <span style={{ position: 'absolute', top: '-4px', right: '-4px', backgroundColor: '#ef4444', color: '#fff', borderRadius: '50%', fontSize: '8px', width: '12px', height: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>1</span>
+            <span style={{ position: 'absolute', top: '-4px', right: '-4px', backgroundColor: '#ef4444', color: '#fff', borderRadius: '50%', fontSize: '8px', width: '12px', height: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>•</span>
           </button>
 
           <button style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}><RotateCw size={14} /></button>
@@ -61,7 +106,7 @@ export default function PlannerCalendar({ events, onCellClick }) {
         {/* Grid Header Days */}
         <div style={{ display: 'grid', gridTemplateColumns: '70px repeat(7, 1fr)', borderBottom: '1px solid #e2e8f0', backgroundColor: '#f8fafc', position: 'sticky', top: 0, zIndex: 10, flexShrink: 0 }}>
           <div style={{ padding: '8px', borderRight: '1px solid #e2e8f0', fontSize: '10px', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>GMT+7</div>
-          {WEEK_DAYS.map((day, idx) => (
+          {displayDays.map((day, idx) => (
             <div key={idx} style={{ padding: '8px', borderRight: '1px solid #e2e8f0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
               <span style={{ fontSize: '10px', color: day.isToday ? '#7c3aed' : '#94a3b8', fontWeight: 600 }}>{day.name}</span>
               <span style={{
@@ -78,37 +123,41 @@ export default function PlannerCalendar({ events, onCellClick }) {
         {/* Time Slots Area */}
         <div style={{ display: 'grid', gridTemplateColumns: '70px repeat(7, 1fr)', position: 'relative' }}>
           
-          {/* Red Current Time Line Marker */}
-          <div style={{
-            position: 'absolute',
-            top: '35.5%', // Mocking ~8:23 AM position
-            left: '70px',
-            right: 0,
-            height: '2px',
-            backgroundColor: '#ef4444',
-            zIndex: 5,
-            pointerEvents: 'none'
-          }}>
-            <div style={{ position: 'absolute', left: '-5px', top: '-4px', width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#ef4444' }} />
-          </div>
+          {/* Red Current Time Line Marker (only visible when today is within current week) */}
+          {isNowInThisWeek && (
+            <>
+              <div style={{
+                position: 'absolute',
+                top: `${timePercent}%`,
+                left: '70px',
+                right: 0,
+                height: '2px',
+                backgroundColor: '#ef4444',
+                zIndex: 5,
+                pointerEvents: 'none'
+              }}>
+                <div style={{ position: 'absolute', left: '-5px', top: '-4px', width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#ef4444' }} />
+              </div>
 
-          {/* Red Time Bubble inside GMT+7 Column */}
-          <div style={{
-            position: 'absolute',
-            top: '35.5%',
-            transform: 'translateY(-50%)',
-            left: '12px',
-            backgroundColor: '#ef4444',
-            color: '#fff',
-            fontSize: '9px',
-            fontWeight: 700,
-            padding: '2px 6px',
-            borderRadius: '4px',
-            zIndex: 6,
-            pointerEvents: 'none'
-          }}>
-            8:23
-          </div>
+              {/* Red Time Bubble inside GMT+7 Column */}
+              <div style={{
+                position: 'absolute',
+                top: `${timePercent}%`,
+                transform: 'translateY(-50%)',
+                left: '12px',
+                backgroundColor: '#ef4444',
+                color: '#fff',
+                fontSize: '9px',
+                fontWeight: 700,
+                padding: '2px 6px',
+                borderRadius: '4px',
+                zIndex: 6,
+                pointerEvents: 'none'
+              }}>
+                {timeFormatted}
+              </div>
+            </>
+          )}
 
           {/* Time Slots */}
           {HOURS.map((hourText, hIdx) => (
@@ -137,7 +186,7 @@ export default function PlannerCalendar({ events, onCellClick }) {
                 return (
                   <div
                     key={dIdx}
-                    onClick={() => onCellClick(hIdx, dIdx)}
+                    onClick={() => onCellClick && onCellClick(hIdx, dIdx)}
                     style={{
                       height: '60px',
                       borderBottom: '1px solid #f1f5f9',
@@ -153,13 +202,22 @@ export default function PlannerCalendar({ events, onCellClick }) {
                     {slotEvents.map(ev => (
                       <div
                         key={ev.id}
-                        onClick={(e) => { e.stopPropagation(); alert(`Event: ${ev.title}`); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (onDeleteEvent) {
+                            if (window.confirm(`Delete event "${ev.title}"?`)) {
+                              onDeleteEvent(ev.id);
+                            }
+                          } else {
+                            alert(`Event: ${ev.title}`);
+                          }
+                        }}
                         style={{
                           position: 'absolute',
                           top: '4px',
                           left: '4px',
                           right: '4px',
-                          height: `${ev.duration * 50}px`,
+                          height: `${(ev.duration || 1) * 50}px`,
                           backgroundColor: ev.color,
                           borderLeft: '3px solid rgba(0,0,0,0.2)',
                           borderRadius: '4px',
@@ -173,6 +231,7 @@ export default function PlannerCalendar({ events, onCellClick }) {
                           zIndex: 2,
                           boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}
+                        title={`${ev.title} (Click to delete)`}
                       >
                         {ev.title}
                       </div>
@@ -199,4 +258,6 @@ export default function PlannerCalendar({ events, onCellClick }) {
       </div>
     </main>
   );
-}
+};
+
+export default React.memo(PlannerCalendar);

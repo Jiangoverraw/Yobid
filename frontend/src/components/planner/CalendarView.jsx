@@ -41,9 +41,10 @@ export default function CalendarView({
   }
 
   // Actual day cells
+  const todayObj = new Date();
   for (let day = 1; day <= daysInMonth; day++) {
     const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const isToday = day === 23 && month === 5 && year === 2026;
+    const isToday = day === todayObj.getDate() && month === todayObj.getMonth() && year === todayObj.getFullYear();
     const dayTasks = filteredTasks.filter(t => t.deadline === dayStr);
 
     cells.push(

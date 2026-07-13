@@ -16,10 +16,10 @@ import PlannerBoard from '../components/PlannerBoard';
 
 /** Map backend role → display label + color */
 const ROLE_META = {
-  ADMIN:           { label: 'Admin',           color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+  ADMIN: { label: 'Admin', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
   PROJECT_MANAGER: { label: 'Project Manager', color: '#7c3aed', bg: 'rgba(124,58,237,0.1)' },
-  MEMBER:          { label: 'Member',           color: '#06b6d4', bg: 'rgba(6,182,212,0.1)' },
-  GUEST:           { label: 'Guest',            color: '#9ca3af', bg: 'rgba(156,163,175,0.1)' },
+  MEMBER: { label: 'Member', color: '#06b6d4', bg: 'rgba(6,182,212,0.1)' },
+  GUEST: { label: 'Guest', color: '#9ca3af', bg: 'rgba(156,163,175,0.1)' },
 };
 
 const renderAvatar = (targetUser, className = 'dash-avatar') => {
@@ -29,9 +29,9 @@ const renderAvatar = (targetUser, className = 'dash-avatar') => {
 
   if (avatarValue && (avatarValue.startsWith('data:image/') || avatarValue.startsWith('http://') || avatarValue.startsWith('https://') || avatarValue.startsWith('/'))) {
     return (
-      <div 
-        className={className} 
-        style={{ 
+      <div
+        className={className}
+        style={{
           background: `url(${avatarValue}) center/cover no-repeat`,
           color: 'transparent'
         }}
@@ -86,7 +86,7 @@ export default function Dashboard() {
   useEffect(() => {
     notificationsApi.countUnread()
       .then(d => setUnreadCount(d.unreadCount ?? 0))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // Close dropdown on outside click
@@ -118,9 +118,9 @@ export default function Dashboard() {
 
   const stats = [
     { icon: <CheckSquare size={20} />, label: 'Tasks Completed', value: '0', color: '#7c3aed', bg: 'rgba(124,58,237,0.08)' },
-    { icon: <Users size={20} />,       label: 'Team Members',    value: '1', color: '#06b6d4', bg: 'rgba(6,182,212,0.08)' },
-    { icon: <BarChart2 size={20} />,   label: 'Projects Active', value: '0', color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
-    { icon: <TrendingUp size={20} />,  label: 'Productivity',    value: '—', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
+    { icon: <Users size={20} />, label: 'Team Members', value: '1', color: '#06b6d4', bg: 'rgba(6,182,212,0.08)' },
+    { icon: <BarChart2 size={20} />, label: 'Projects Active', value: '0', color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
+    { icon: <TrendingUp size={20} />, label: 'Productivity', value: '—', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
   ];
 
   return (

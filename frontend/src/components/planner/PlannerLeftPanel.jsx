@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus, MoreHorizontal, Flag, Search, ChevronRight } from 'lucide-react';
 
-export default function PlannerLeftPanel() {
+const PlannerLeftPanel = function PlannerLeftPanel() {
   return (
     <aside className="planner-left-panel" style={{ width: '250px', backgroundColor: '#f8fafc', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', padding: '1rem', overflowY: 'auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
@@ -58,4 +58,6 @@ export default function PlannerLeftPanel() {
       </div>
     </aside>
   );
-}
+};
+
+export default React.memo(PlannerLeftPanel);

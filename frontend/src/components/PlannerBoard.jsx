@@ -16,7 +16,7 @@ import PlannerModals from './planner/PlannerModals';
 export default function PlannerBoard(props) {
   const { user } = useAuth();
   const userDisplayName = user?.name || user?.email?.split('@')[0] || 'User';
-  
+
   const greeting = (() => {
     const h = new Date().getHours();
     if (h < 12) return 'Good morning';
@@ -29,9 +29,14 @@ export default function PlannerBoard(props) {
   // Send workspace info back up to Dashboard.jsx topbar
   useEffect(() => {
     if (props.onWorkspaceInfo) {
-      props.onWorkspaceInfo({
-        name: board.workspaceName,
-        onRename: board.handleRenameWorkspace
+      props.onWorkspaceInfo(prev => {
+        if (prev?.name === board.workspaceName && prev?.onRename === board.handleRenameWorkspace) {
+          return prev;
+        }
+        return {
+          name: board.workspaceName,
+          onRename: board.handleRenameWorkspace
+        };
       });
     }
   }, [board.workspaceName, board.handleRenameWorkspace, props.onWorkspaceInfo]);
@@ -46,19 +51,19 @@ export default function PlannerBoard(props) {
     e.preventDefault();
     const startX = e.clientX;
     const startWidth = sidebarWidth;
-    
+
     const handleMouseMove = (moveEvent) => {
       const deltaX = moveEvent.clientX - startX;
       const newWidth = Math.max(160, Math.min(400, startWidth + deltaX));
       setSidebarWidth(newWidth);
       localStorage.setItem('yobid_planner_sidebar_width', newWidth.toString());
     };
-    
+
     const handleMouseUp = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-    
+
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
